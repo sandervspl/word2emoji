@@ -32,7 +32,7 @@ export const EmojiResults: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="mt-8 grid w-full gap-8 md:grid-cols-2 lg:grid-cols-4">
+    <div className="mt-8 grid w-full grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-8">
       {props.emojis.map((emoji, i) => (
         <button
           key={i}
