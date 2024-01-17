@@ -5,13 +5,13 @@ import { internal_runWithWaitUntil as waitUntil } from 'next/dist/server/web/int
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 import { eq } from 'drizzle-orm';
-import OpenAI from 'openai';
-import wordsCount from 'words-count';
 
 import { db } from 'src/db';
 import { emojis } from 'src/db/schema';
 import { FormState, PromptForm } from 'modules/home/prompt-form';
 import { RecentlyGenerated } from 'modules/home/recently-generated';
+
+import { savePrompt, sendToOpenAI, validatePrompt } from './actions';
 
 type Props = i.NextPageProps;
 
@@ -31,34 +31,10 @@ const ratelimit = new Ratelimit({
 const Page: React.FC<Props> = async () => {
   const randomId = Math.floor(Math.random() * 1000000);
 
-  async function sendToOpenAI(prompt: string) {
-    'use server';
-
-    const openai = new OpenAI();
-
-    const response = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        {
-          role: 'system',
-          content:
-            'Reply with 4 emojis that are relevant to the prompt. Separate them with commas.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      max_tokens: 200,
-      temperature: 1,
-    });
-
-    return response.choices[0]?.message.content;
-  }
-
   async function getEmojis(prevState: FormState, formdata: FormData) {
     'use server';
 
+    // Prevent spamming
     const { success } = await ratelimit.limit(String(randomId));
     if (!success) {
       return {
@@ -67,31 +43,14 @@ const Page: React.FC<Props> = async () => {
     }
 
     const prompt = formdata.get('prompt') as string;
+    const validateResult = validatePrompt(prompt);
 
-    if (wordsCount(prompt) > 1) {
-      return {
-        error: 'Please enter a single word',
-      };
+    // Validate prompt
+    if (validateResult && 'error' in validateResult) {
+      return validateResult;
     }
 
-    if (/[^a-zA-Z]/.test(prompt)) {
-      return {
-        error: 'Please enter a word without special characters',
-      };
-    }
-
-    if (prompt.length < 2) {
-      return {
-        error: 'Please enter a word longer than 3 characters',
-      };
-    }
-
-    if (prompt.length > 20) {
-      return {
-        error: 'Please enter a word less than 20 characters',
-      };
-    }
-
+    // Check if the prompt is stored in db
     const cached = await db.query.emojis.findFirst({
       columns: { emoji: true },
       where: eq(emojis.word, prompt),
@@ -103,6 +62,7 @@ const Page: React.FC<Props> = async () => {
 
     let emojisResult: undefined | string[] = undefined;
 
+    // Max 3 tries to get a result
     for await (const i of [0, 1, 2]) {
       const result = await sendToOpenAI(prompt);
       emojisResult = result?.split(',').map((e) => e.trim());
@@ -112,21 +72,8 @@ const Page: React.FC<Props> = async () => {
       }
     }
 
-    waitUntil(async () => {
-      if (!prompt || !emojisResult) {
-        throw new Error('Invalid prompt');
-      }
-
-      await db
-        .insert(emojis)
-        .values({
-          word: prompt,
-          emoji: emojisResult.join(','),
-          created_at: new Date().toISOString(),
-        })
-        .onConflictDoNothing()
-        .execute();
-    });
+    // Insert to db in the background while returning the result to the user
+    waitUntil(() => savePrompt(prompt, emojisResult));
 
     return emojisResult;
   }
