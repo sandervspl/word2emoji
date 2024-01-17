@@ -139,8 +139,6 @@ const Page: React.FC<Props> = async () => {
           Turn your words into emojis in a snap!
         </p>
 
-        <div className="my-10" />
-
         <PromptForm action={getEmojis} />
 
         <div className="my-8" />
