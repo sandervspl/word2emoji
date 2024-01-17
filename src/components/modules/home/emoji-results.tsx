@@ -33,7 +33,7 @@ export const EmojiResults: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="mx-auto mt-8 grid w-full max-w-screen-md gap-8 md:grid-cols-2 lg:grid-cols-4">
+    <div className="mx-auto mt-8 grid w-full max-w-screen-md grid-cols-2 gap-8 md:grid-cols-4">
       {props.emojis.map((emoji, i) => (
         <button
           key={i}
