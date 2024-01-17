@@ -17,5 +17,7 @@ module.exports = {
     '',
     '^[./]',
   ],
-  plugins: ['prettier-plugin-tailwindcss'],
+  importOrderParserPlugins: ['typescript', 'jsx'],
+  importOrderTypeScriptVersion: '5.3.3',
+  plugins: ['@ianvs/prettier-plugin-sort-imports', 'prettier-plugin-tailwindcss'],
 };
