@@ -4,6 +4,7 @@ import * as i from 'types';
 import * as React from 'react';
 import { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { Toaster } from 'sonner';
 
 import { cn } from 'services/cn';
 import { SizeIndicator } from 'common/size-indicator';
@@ -31,6 +32,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
       <body className={cn('h-full min-h-full', inter.className)}>
         <Providers>
           {children}
+          <Toaster />
           {process.env.NODE_ENV !== 'production' && <SizeIndicator />}
         </Providers>
       </body>
