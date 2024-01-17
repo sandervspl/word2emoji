@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "noUncheckedIndexedAccess": true,
+    "sourceMap": true,
+    "pretty": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "allowJs": false,
+    "isolatedModules": true,
+    "incremental": true,
+    "moduleResolution": "node",
+    "target": "esnext",
+    "module": "esnext",
+    "jsx": "preserve",
+    "lib": ["dom", "esnext"],
+    "baseUrl": ".",
+    "paths": {
+      "common": ["src/components/common/index"],
+      "common/*": ["src/components/common/*"],
+      "hooks": ["src/services/hooks/index"],
+      "hooks/*": ["src/services/hooks/*"],
+      "images/*": ["public/images/*"],
+      "modules": ["src/components/modules/index"],
+      "modules/*": ["src/components/modules/*"],
+      "queries/*": ["src/queries/*"],
+      "services": ["src/services"],
+      "services/*": ["src/services/*"],
+      "styles/*": ["src/styles/*"],
+      "tests/*": ["src/__tests__/*"],
+      "types": ["src/types/index"],
+      "vectors/*": ["public/vectors/*"]
+    },
+    "plugins": [{ "name": "next" }]
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/**/*.d.ts", ".next/types/**/*.ts"],
+  "exclude": ["dist", ".next", "out", "next.config.js", "node_modules"]
+}
