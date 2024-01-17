@@ -26,25 +26,18 @@ const Page: React.FC<Props> = async () => {
           Turn your words into emojis in a snap!
         </p>
         <div className="mt-8 w-full max-w-md">
-          <Input className="w-full" placeholder="Enter a word" />
+          <Input className="w-full" placeholder="Enter a word" autoFocus />
         </div>
         <div className="mt-8 grid w-full max-w-4xl gap-8 md:grid-cols-2 lg:grid-cols-4">
-          <div className="flex flex-col items-center text-gray-900 dark:text-gray-100">
-            <Clock1Icon className="h-12 w-12" />
-            <p className="mt-2">Emoji 1</p>
-          </div>
-          <div className="flex flex-col items-center text-gray-900 dark:text-gray-100">
-            <User2Icon className="h-12 w-12" />
-            <p className="mt-2">Emoji 2</p>
-          </div>
-          <div className="flex flex-col items-center text-gray-900 dark:text-gray-100">
-            <Music3Icon className="h-12 w-12" />
-            <p className="mt-2">Emoji 3</p>
-          </div>
-          <div className="flex flex-col items-center text-gray-900 dark:text-gray-100">
-            <Heading4Icon className="h-12 w-12" />
-            <p className="mt-2">Emoji 4</p>
-          </div>
+          {['😀', '😃', '😄', '😁'].map((emoji, i) => (
+            <div
+              key={i}
+              className="flex flex-col items-center rounded-md border p-4 text-gray-900 dark:text-gray-100"
+            >
+              {emoji}
+              <p className="mt-2">Emoji {i}</p>
+            </div>
+          ))}
         </div>
         <div className="mt-8 w-full max-w-2xl">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">

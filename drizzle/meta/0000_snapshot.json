@@ -1,0 +1,59 @@
+{
+  "version": "5",
+  "dialect": "sqlite",
+  "id": "f26ffd77-0ce0-4177-b488-3e67066fe2a7",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "tables": {
+    "emojis": {
+      "name": "emojis",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "word": {
+          "name": "word",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "emoji": {
+          "name": "emoji",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "word_idx": {
+          "name": "word_idx",
+          "columns": [
+            "word"
+          ],
+          "isUnique": false
+        },
+        "word_unq": {
+          "name": "word_unq",
+          "columns": [
+            "word"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}
