@@ -70,11 +70,6 @@ const Page: React.FC<Props> = async () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-white dark:bg-gray-900">
-      <header className="flex items-center justify-between px-6 py-4">
-        <Link href="/">
-          <FlagIcon className="h-8 w-8 text-gray-900 dark:text-gray-100" />
-        </Link>
-      </header>
       <main className="flex flex-grow flex-col items-center justify-center p-4 text-center md:p-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Emoji Generator</h1>
         <p className="mt-2 text-gray-600 dark:text-gray-400">
@@ -89,9 +84,6 @@ const Page: React.FC<Props> = async () => {
           </h2>
         </div>
       </main>
-      <footer className="flex h-16 items-center justify-center bg-gray-100 dark:bg-gray-800">
-        <p className="text-sm text-gray-600 dark:text-gray-400">© 2024 Emoji Generator</p>
-      </footer>
     </div>
   );
 };
