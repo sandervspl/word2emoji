@@ -16,14 +16,18 @@
     "@libsql/client": "^0.4.0-pre.7",
     "@tanstack/react-query": "^5.17.15",
     "@tanstack/react-query-next-experimental": "^5.17.15",
+    "ai": "^2.2.31",
     "clsx": "^2.1.0",
     "drizzle-orm": "^0.29.3",
     "lucide-react": "^0.311.0",
     "next": "^14.0.4",
     "next-auth": "^4.24.5",
+    "node-emoji": "^2.1.3",
     "ofetch": "^1.3.3",
+    "openai": "^4.24.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "server-only": "^0.0.1",
     "tailwind-merge": "^2.2.0"
   },
   "devDependencies": {
