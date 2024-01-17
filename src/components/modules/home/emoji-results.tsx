@@ -17,13 +17,14 @@ export const EmojiResults: React.FC<Props> = (props) => {
 
   if (pending) {
     return (
-      <div className="mt-8 grid w-full max-w-4xl gap-8 md:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-8 grid w-full gap-8 md:grid-cols-2 lg:grid-cols-4">
         {[0, 0, 0, 0].map((emoji, i) => (
           <div
             key={i}
             className="flex flex-col items-center rounded-md border p-4 text-gray-900 dark:text-gray-100"
           >
-            ...
+            <div className="text-3xl">...</div>
+            <p className="mt-2" />
           </div>
         ))}
       </div>
@@ -31,7 +32,7 @@ export const EmojiResults: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="mt-8 grid w-full max-w-4xl gap-8 md:grid-cols-2 lg:grid-cols-4">
+    <div className="mt-8 grid w-full gap-8 md:grid-cols-2 lg:grid-cols-4">
       {props.emojis.map((emoji, i) => (
         <div
           key={i}

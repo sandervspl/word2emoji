@@ -15,8 +15,13 @@ export const PromptForm = (props: Props) => {
   const [emojis, formAction] = ReactDOM.useFormState(props.action, []);
 
   return (
-    <form className="mt-8 w-full max-w-md" action={formAction}>
-      <Input className="w-fullx" placeholder="Enter a word" name="prompt" autoFocus />
+    <form className="mt-8 w-full" action={formAction}>
+      <Input
+        className="mx-auto w-full max-w-screen-sm [&>input]:py-2 [&>input]:text-lg"
+        placeholder="Enter a word"
+        name="prompt"
+        autoFocus
+      />
 
       <EmojiResults emojis={emojis || []} />
     </form>

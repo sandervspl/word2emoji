@@ -70,15 +70,19 @@ const Page: React.FC<Props> = async () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-white dark:bg-gray-900">
-      <main className="flex flex-grow flex-col items-center justify-center p-4 text-center md:p-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Emoji Generator</h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
+      <main className="flex flex-grow flex-col items-center p-4 text-center md:p-16">
+        <h1 className="mt-20 text-5xl font-bold text-gray-900 dark:text-gray-100">
+          Emoji Generator
+        </h1>
+        <p className="mt-2 text-xl text-gray-600 dark:text-gray-400">
           Turn your words into emojis in a snap!
         </p>
 
+        <div className="my-10" />
+
         <PromptForm action={getEmojis} />
 
-        <div className="mt-8 w-full max-w-2xl">
+        <div className="mt-8 w-full">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             Recently Generated
           </h2>
