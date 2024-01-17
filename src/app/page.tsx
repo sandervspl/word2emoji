@@ -2,15 +2,13 @@ import * as i from 'types';
 import * as React from 'react';
 import { Metadata } from 'next';
 import { internal_runWithWaitUntil as waitUntil } from 'next/dist/server/web/internal-edge-wait-until';
-import Link from 'next/link';
 import { eq } from 'drizzle-orm';
-import { FlagIcon } from 'lucide-react';
 import OpenAI from 'openai';
+import wordsCount from 'words-count';
 
 import { db } from 'src/db';
 import { emojis } from 'src/db/schema';
-import { Input } from 'common/input';
-import { PromptForm } from 'modules/home/prompt-form';
+import { FormState, PromptForm } from 'modules/home/prompt-form';
 import { RecentlyGenerated } from 'modules/home/recently-generated';
 
 type Props = i.NextPageProps;
@@ -45,10 +43,35 @@ const Page: React.FC<Props> = async () => {
     return response.choices[0]?.message.content;
   }
 
-  async function getEmojis(prevState: string[] | undefined, formdata: FormData) {
+  async function getEmojis(prevState: FormState, formdata: FormData) {
     'use server';
 
     const prompt = formdata.get('prompt') as string;
+
+    if (wordsCount(prompt) > 1) {
+      return {
+        error: 'Please enter a single word',
+      };
+    }
+
+    if (/[^a-zA-Z]/.test(prompt)) {
+      return {
+        error: 'Please enter a word without special characters',
+      };
+    }
+
+    if (prompt.length < 2) {
+      return {
+        error: 'Please enter a word longer than 3 characters',
+      };
+    }
+
+    if (prompt.length > 20) {
+      return {
+        error: 'Please enter a word less than 20 characters',
+      };
+    }
+
     const cached = await db.query.emojis.findFirst({
       columns: { emoji: true },
       where: eq(emojis.word, prompt),
