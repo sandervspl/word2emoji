@@ -1,11 +1,12 @@
 import 'styles/globals.css';
+
 import * as i from 'types';
 import * as React from 'react';
 import { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
 import { cn } from 'services/cn';
-import { SizeIndicator } from 'common/SizeIndicator';
+import { SizeIndicator } from 'common/size-indicator';
 
 import { Providers } from './Providers';
 
