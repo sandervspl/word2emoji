@@ -2,6 +2,8 @@ import * as i from 'types';
 import * as React from 'react';
 import { Metadata } from 'next';
 import { internal_runWithWaitUntil as waitUntil } from 'next/dist/server/web/internal-edge-wait-until';
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 import { eq } from 'drizzle-orm';
 import OpenAI from 'openai';
 import wordsCount from 'words-count';
@@ -18,7 +20,15 @@ export const metadata: Metadata = {
   description: 'Turn your words into emojis in a snap!',
 };
 
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(10, '10 s'),
+  prefix: 'word2emoji',
+});
+
 const Page: React.FC<Props> = async () => {
+  const randomId = Math.floor(Math.random() * 1000000);
+
   async function sendToOpenAI(prompt: string) {
     'use server';
 
@@ -46,6 +56,13 @@ const Page: React.FC<Props> = async () => {
 
   async function getEmojis(prevState: FormState, formdata: FormData) {
     'use server';
+
+    const { success } = await ratelimit.limit(String(randomId));
+    if (!success) {
+      return {
+        error: 'Please wait a few seconds before trying again',
+      };
+    }
 
     const prompt = formdata.get('prompt') as string;
 

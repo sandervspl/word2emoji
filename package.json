@@ -16,6 +16,8 @@
     "@libsql/client": "^0.4.0-pre.7",
     "@tanstack/react-query": "^5.17.15",
     "@tanstack/react-query-next-experimental": "^5.17.15",
+    "@upstash/ratelimit": "^1.0.0",
+    "@upstash/redis": "^1.28.1",
     "ai": "^2.2.31",
     "clsx": "^2.1.0",
     "drizzle-orm": "^0.29.3",
