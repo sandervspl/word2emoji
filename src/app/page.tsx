@@ -11,6 +11,7 @@ import { db } from 'src/db';
 import { emojis } from 'src/db/schema';
 import { Input } from 'common/input';
 import { PromptForm } from 'modules/home/prompt-form';
+import { RecentlyGenerated } from 'modules/home/recently-generated';
 
 type Props = i.NextPageProps;
 
@@ -60,7 +61,7 @@ const Page: React.FC<Props> = async () => {
 
       await db
         .insert(emojis)
-        .values({ word: prompt, emoji: result })
+        .values({ word: prompt, emoji: result, created_at: new Date().toISOString() })
         .onConflictDoNothing()
         .execute();
     });
@@ -82,11 +83,9 @@ const Page: React.FC<Props> = async () => {
 
         <PromptForm action={getEmojis} />
 
-        <div className="mt-8 w-full">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            Recently Generated
-          </h2>
-        </div>
+        <div className="my-8" />
+
+        <RecentlyGenerated />
       </main>
     </div>
   );

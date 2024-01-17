@@ -8,6 +8,13 @@
       "when": 1705518388638,
       "tag": "0000_nasty_mikhail_rasputin",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1705522469695,
+      "tag": "0001_slim_maverick",
+      "breakpoints": true
     }
   ]
 }

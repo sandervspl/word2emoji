@@ -6,6 +6,7 @@ export const emojis = sqliteTable(
     id: integer('id').primaryKey({ autoIncrement: true }),
     word: text('word').notNull(),
     emoji: text('emoji').notNull(),
+    created_at: text('created_at').notNull(),
   },
   (table) => ({
     word_unq: unique('word_unq').on(table.word),

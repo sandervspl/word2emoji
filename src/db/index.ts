@@ -11,4 +11,4 @@ const client = createClient({
 
 export const db = drizzle(client, { schema });
 
-migrate(db, { migrationsFolder: 'drizzle' });
+// migrate(db, { migrationsFolder: 'drizzle' });

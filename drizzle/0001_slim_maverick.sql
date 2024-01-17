@@ -1,0 +1,1 @@
+ALTER TABLE emojis ADD `created_at` text NOT NULL;
