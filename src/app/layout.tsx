@@ -4,8 +4,10 @@ import * as i from 'types';
 import * as React from 'react';
 import { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import Link from 'next/link';
 import { Toaster } from 'sonner';
 
+import { GithubIcon } from 'common/github';
 import { SizeIndicator } from 'common/size-indicator';
 
 type Props = i.NextLayoutProps;
@@ -30,6 +32,15 @@ const RootLayout: React.FC<Props> = ({ children }) => {
         {children}
         <Toaster />
         {process.env.NODE_ENV !== 'production' && <SizeIndicator />}
+        <div className="fixed bottom-2 right-2 items-center justify-end p-2">
+          <Link
+            href="https://github.com/sandervspl/word2emoji"
+            target="_blank"
+            className="block size-6"
+          >
+            <GithubIcon className="dark:fill-white" />
+          </Link>
+        </div>
       </body>
     </html>
   );
