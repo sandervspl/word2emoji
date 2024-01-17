@@ -14,7 +14,8 @@ import { RecentlyGenerated } from 'modules/home/recently-generated';
 type Props = i.NextPageProps;
 
 export const metadata: Metadata = {
-  title: 'Home',
+  title: 'Word 2 Emoji',
+  description: 'Turn your words into emojis in a snap!',
 };
 
 const Page: React.FC<Props> = async () => {
