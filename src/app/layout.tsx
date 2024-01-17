@@ -8,8 +8,6 @@ import { Toaster } from 'sonner';
 
 import { SizeIndicator } from 'common/size-indicator';
 
-import { Providers } from './Providers';
-
 type Props = i.NextLayoutProps;
 
 const inter = Inter({ subsets: ['latin'] });
@@ -29,11 +27,9 @@ const RootLayout: React.FC<Props> = ({ children }) => {
         />
       </head>
       <body className={`h-full min-h-full ${inter.className}`}>
-        <Providers>
-          {children}
-          <Toaster />
-          {process.env.NODE_ENV !== 'production' && <SizeIndicator />}
-        </Providers>
+        {children}
+        <Toaster />
+        {process.env.NODE_ENV !== 'production' && <SizeIndicator />}
       </body>
     </html>
   );
