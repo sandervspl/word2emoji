@@ -37,7 +37,7 @@ export const RecentlyGenerated = async (props: Props) => {
             key={emoji.id}
             className="flex flex-col items-center justify-between space-y-2 rounded-md bg-gray-100 p-4 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
           >
-            <p className="font-medium dark:text-gray-400">{emoji.word}</p>
+            <p className="font-medium capitalize dark:text-gray-400">{emoji.word}</p>
             <ul className="flex items-center justify-center gap-2">
               {emoji.emoji.split(',').map((e) => (
                 <li key={e} className="text-3xl">
