@@ -20,18 +20,8 @@ export const metadata: Metadata = {
 };
 
 const Page: React.FC<Props> = async () => {
-  async function getEmojis(prevState: string[] | undefined, formdata: FormData) {
+  async function sendToOpenAI(prompt: string) {
     'use server';
-
-    const prompt = formdata.get('prompt') as string;
-    const cached = await db.query.emojis.findFirst({
-      columns: { emoji: true },
-      where: eq(emojis.word, prompt),
-    });
-
-    if (cached) {
-      return cached.emoji.split(',').map((e) => e.trim());
-    }
 
     const openai = new OpenAI();
 
@@ -52,21 +42,52 @@ const Page: React.FC<Props> = async () => {
       temperature: 1,
     });
 
-    const result = response.choices[0]?.message.content;
+    return response.choices[0]?.message.content;
+  }
+
+  async function getEmojis(prevState: string[] | undefined, formdata: FormData) {
+    'use server';
+
+    const prompt = formdata.get('prompt') as string;
+    const cached = await db.query.emojis.findFirst({
+      columns: { emoji: true },
+      where: eq(emojis.word, prompt),
+    });
+
+    if (cached) {
+      return cached.emoji.split(',').map((e) => e.trim());
+    }
+
+    let emojisResult: undefined | string[] = undefined;
+
+    for await (const i of [0, 1, 2]) {
+      const result = await sendToOpenAI(prompt);
+      emojisResult = result?.split(',').map((e) => e.trim());
+
+      if (emojisResult && emojisResult.length > 1) {
+        break;
+      }
+    }
+
+    console.log(emojisResult);
 
     waitUntil(async () => {
-      if (!prompt || !result) {
+      if (!prompt || !emojisResult) {
         throw new Error('Invalid prompt');
       }
 
       await db
         .insert(emojis)
-        .values({ word: prompt, emoji: result, created_at: new Date().toISOString() })
+        .values({
+          word: prompt,
+          emoji: emojisResult.join(','),
+          created_at: new Date().toISOString(),
+        })
         .onConflictDoNothing()
         .execute();
     });
 
-    return result?.split(',').map((e) => e.trim());
+    return emojisResult;
   }
 
   return (
