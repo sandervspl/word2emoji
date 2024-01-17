@@ -19,14 +19,14 @@ export const metadata: Metadata = {
 
 const RootLayout: React.FC<Props> = ({ children }) => {
   return (
-    <html lang="en" className="h-full bg-white antialiased">
+    <html lang="en" className="h-full bg-white antialiased dark:bg-gray-900">
       <head>
         <link
           rel="icon"
           href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>😃</text></svg>"
         />
       </head>
-      <body className={`h-full min-h-full ${inter.className}`}>
+      <body className={`h-full min-h-full bg-white dark:bg-gray-900 ${inter.className}`}>
         {children}
         <Toaster />
         {process.env.NODE_ENV !== 'production' && <SizeIndicator />}
