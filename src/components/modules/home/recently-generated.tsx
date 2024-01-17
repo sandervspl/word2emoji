@@ -31,14 +31,14 @@ export const RecentlyGenerated = async (props: Props) => {
   return (
     <div className="mt-8 w-full max-w-screen-md space-y-6">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Recently Generated</h2>
-      <ul className="grid w-full grid-cols-2 gap-x-20 gap-y-4">
+      <ul className="grid w-full grid-cols-2 gap-x-4 gap-y-4 sm:gap-x-20">
         {result.map((emoji) => (
           <li
             key={emoji.id}
             className="flex flex-col items-center justify-between space-y-2 rounded-md bg-gray-100 p-4 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
           >
             <p className="font-medium capitalize dark:text-gray-400">{emoji.word}</p>
-            <ul className="flex items-center justify-center gap-2">
+            <ul className="flex flex-wrap items-center justify-center gap-2">
               {emoji.emoji.split(',').map((e) => (
                 <li key={e} className="text-3xl">
                   <EmojiButton emoji={e} />
