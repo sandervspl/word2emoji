@@ -1,8 +1,10 @@
 import { unstable_cache } from 'next/cache';
-import { desc, lte } from 'drizzle-orm';
+import { desc } from 'drizzle-orm';
 
 import { db } from 'src/db';
 import { emojis } from 'src/db/schema';
+
+import { EmojiButton } from './emoji-button';
 
 type Props = {};
 
@@ -40,7 +42,7 @@ export const RecentlyGenerated = async (props: Props) => {
             <ul className="flex items-center justify-center gap-4">
               {emoji.emoji.split(',').map((e) => (
                 <li key={e} className="text-3xl">
-                  {e}
+                  <EmojiButton emoji={e} />
                 </li>
               ))}
             </ul>

@@ -18,7 +18,7 @@ export const EmojiResults: React.FC<Props> = (props) => {
   if (pending) {
     return (
       <div className="mt-8 grid w-full gap-8 md:grid-cols-2 lg:grid-cols-4">
-        {[0, 0, 0, 0].map((emoji, i) => (
+        {[0, 0, 0, 0].map((_, i) => (
           <div
             key={i}
             className="flex flex-col items-center rounded-md border p-4 text-gray-900 dark:text-gray-100"
@@ -34,13 +34,16 @@ export const EmojiResults: React.FC<Props> = (props) => {
   return (
     <div className="mt-8 grid w-full gap-8 md:grid-cols-2 lg:grid-cols-4">
       {props.emojis.map((emoji, i) => (
-        <div
+        <button
           key={i}
           className="flex flex-col items-center rounded-md border p-4 text-gray-900 dark:text-gray-100"
+          onClick={() => {
+            navigator.clipboard.writeText(emoji);
+          }}
         >
           <div className="text-3xl">{emoji}</div>
           <p className="mt-2">{unemojify(emoji)}</p>
-        </div>
+        </button>
       ))}
     </div>
   );
