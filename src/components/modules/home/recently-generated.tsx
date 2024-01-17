@@ -30,16 +30,16 @@ export const RecentlyGenerated = async (props: Props) => {
   console.log(result);
 
   return (
-    <div className="mt-8 w-full max-w-md">
+    <div className="mt-8 w-full max-w-screen-md space-y-6">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Recently Generated</h2>
-      <ul className="flex flex-col">
+      <ul className="grid w-full grid-cols-2 gap-x-20 gap-y-4">
         {result.map((emoji) => (
           <li
             key={emoji.id}
-            className="flex items-center justify-between rounded-md p-4 text-gray-900 dark:text-gray-100"
+            className="flex flex-col items-center justify-between space-y-2 rounded-md bg-gray-800 p-4 text-gray-900 dark:text-gray-100"
           >
-            <p className="mt-2">{emoji.word}</p>
-            <ul className="flex items-center justify-center gap-4">
+            <p className="font-medium dark:text-gray-400">{emoji.word}</p>
+            <ul className="flex items-center justify-center gap-2">
               {emoji.emoji.split(',').map((e) => (
                 <li key={e} className="text-3xl">
                   <EmojiButton emoji={e} />
