@@ -9,7 +9,7 @@ type Props = {
 export const EmojiButton: React.FC<Props> = (props) => {
   return (
     <button
-      className="aspect-square rounded-md p-2 hover:bg-gray-700"
+      className="aspect-square rounded-md p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
       onClick={() => {
         navigator.clipboard.writeText(props.emoji);
       }}
