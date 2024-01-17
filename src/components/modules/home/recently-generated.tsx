@@ -27,7 +27,6 @@ const getRecentEmojis = unstable_cache(
 
 export const RecentlyGenerated = async (props: Props) => {
   const result = await getRecentEmojis();
-  console.log(result);
 
   return (
     <div className="mt-8 w-full max-w-screen-md space-y-6">

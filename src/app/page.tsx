@@ -110,8 +110,6 @@ const Page: React.FC<Props> = async () => {
       }
     }
 
-    console.log(emojisResult);
-
     waitUntil(async () => {
       if (!prompt || !emojisResult) {
         throw new Error('Invalid prompt');
