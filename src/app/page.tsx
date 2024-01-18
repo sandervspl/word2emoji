@@ -73,6 +73,10 @@ const Page: React.FC<Props> = async () => {
         continue;
       }
 
+      if (result.length > 20) {
+        continue;
+      }
+
       const tempResult = result?.split(',').map((e) => e.trim());
 
       if (tempResult && tempResult.length > 1) {
