@@ -8,10 +8,11 @@ import { eq } from 'drizzle-orm';
 
 import { db } from 'src/db';
 import { emojis } from 'src/db/schema';
+import { validatePrompt } from 'src/utils/validation';
 import { FormState, PromptForm } from 'modules/home/prompt-form';
 import { RecentlyGenerated } from 'modules/home/recently-generated';
 
-import { savePrompt, sendToOpenAI, validatePrompt } from './actions';
+import { savePrompt, sendToOpenAI } from './actions';
 
 type Props = i.NextPageProps;
 
@@ -43,7 +44,7 @@ const Page: React.FC<Props> = async () => {
     }
 
     const prompt = formdata.get('prompt') as string;
-    const validateResult = validatePrompt(prompt);
+    const validateResult = await validatePrompt(prompt);
 
     // Validate prompt
     if (validateResult && 'error' in validateResult) {

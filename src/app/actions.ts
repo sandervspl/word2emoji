@@ -28,32 +28,6 @@ export async function sendToOpenAI(prompt: string) {
   return response.choices[0]?.message.content;
 }
 
-export async function validatePrompt(prompt: string) {
-  if (wordsCount(prompt) > 1) {
-    return {
-      error: 'Please enter a single word',
-    };
-  }
-
-  if (/[^a-zA-Z]/.test(prompt)) {
-    return {
-      error: 'Please enter a word without special characters',
-    };
-  }
-
-  if (prompt.length < 2) {
-    return {
-      error: 'Please enter a word longer than 3 characters',
-    };
-  }
-
-  if (prompt.length > 20) {
-    return {
-      error: 'Please enter a word less than 20 characters',
-    };
-  }
-}
-
 export async function savePrompt(prompt: string, result: string[] | undefined) {
   if (!prompt || !result) {
     throw new Error('Invalid prompt');
