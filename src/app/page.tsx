@@ -6,6 +6,7 @@ import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 import { eq } from 'drizzle-orm';
 import * as emoji from 'node-emoji';
+import pRetry from 'p-retry';
 
 import { db } from 'src/db';
 import { emojis } from 'src/db/schema';
@@ -62,28 +63,30 @@ const Page: React.FC<Props> = async () => {
       return cached.emoji.split(',').map((e) => e.trim());
     }
 
-    let emojisResult: undefined | string[] = undefined;
-
     // Max 3 tries to get a result
-    for await (const i of [0, 1, 2]) {
-      const result = await sendToOpenAI(prompt);
+    const emojisResult = await pRetry(
+      async () => {
+        const result = await sendToOpenAI(prompt);
 
-      // Check if we got a result and result contains emojis
-      if (!result || emoji.strip(result) === result) {
-        continue;
-      }
+        // Check if we got a result and result contains emojis
+        if (!result || emoji.strip(result) === result) {
+          throw new Error('No emojis found');
+        }
 
-      if (result.length > 20) {
-        continue;
-      }
+        if (result.length > 20) {
+          throw new Error('Text too long');
+        }
 
-      const tempResult = result?.split(',').map((e) => e.trim());
+        const tempResult = result?.split(',').map((e) => e.trim());
 
-      if (tempResult && tempResult.length > 1) {
-        emojisResult = tempResult;
-        break;
-      }
-    }
+        if (tempResult && tempResult.length > 1) {
+          return tempResult;
+        }
+
+        throw new Error('No emojis found');
+      },
+      { retries: 3 },
+    );
 
     if (emojisResult == null) {
       return {
