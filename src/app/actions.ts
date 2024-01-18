@@ -1,7 +1,6 @@
 'use server';
 
 import OpenAI from 'openai';
-import wordsCount from 'words-count';
 
 import { db } from 'src/db';
 import { emojis } from 'src/db/schema';
@@ -10,7 +9,7 @@ export async function sendToOpenAI(prompt: string) {
   const openai = new OpenAI();
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-3.5-turbo',
+    model: 'gpt-4',
     messages: [
       {
         role: 'system',
