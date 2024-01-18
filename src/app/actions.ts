@@ -14,7 +14,7 @@ export async function sendToOpenAI(prompt: string) {
       {
         role: 'system',
         content:
-          'The user will send you a phrase. Reply with 4 emojis that are relevant to the prompt. Separate them with commas. Do NOT reply like this a conversation.',
+          'The user will send you a phrase. Reply with 4 unique emojis that are relevant to the prompt. Separate them with commas. Do NOT reply like this a conversation.x',
       },
       {
         role: 'user',
