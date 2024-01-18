@@ -5,6 +5,7 @@ import { internal_runWithWaitUntil as waitUntil } from 'next/dist/server/web/int
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 import { eq } from 'drizzle-orm';
+import * as emoji from 'node-emoji';
 
 import { db } from 'src/db';
 import { emojis } from 'src/db/schema';
@@ -66,11 +67,24 @@ const Page: React.FC<Props> = async () => {
     // Max 3 tries to get a result
     for await (const i of [0, 1, 2]) {
       const result = await sendToOpenAI(prompt);
-      emojisResult = result?.split(',').map((e) => e.trim());
 
-      if (emojisResult && emojisResult.length > 1) {
+      // Check if we got a result and result contains emojis
+      if (!result || emoji.strip(result) === result) {
+        continue;
+      }
+
+      const tempResult = result?.split(',').map((e) => e.trim());
+
+      if (tempResult && tempResult.length > 1) {
+        emojisResult = tempResult;
         break;
       }
+    }
+
+    if (emojisResult == null) {
+      return {
+        error: 'Something went wrong, please try again',
+      };
     }
 
     // Insert to db in the background while returning the result to the user
