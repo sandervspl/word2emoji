@@ -13,7 +13,8 @@ export async function sendToOpenAI(prompt: string) {
     messages: [
       {
         role: 'system',
-        content: 'Reply with 4 emojis that are relevant to the prompt. Separate them with commas.',
+        content:
+          'The user will send you a phrase. Reply with 4 emojis that are relevant to the prompt. Separate them with commas. Do NOT reply like this a conversation.',
       },
       {
         role: 'user',
