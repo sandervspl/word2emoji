@@ -5,6 +5,7 @@ import * as React from 'react';
 import { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Link from 'next/link';
+import { Analytics } from '@vercel/analytics/react';
 import { Toaster } from 'sonner';
 
 import { GithubIcon } from 'common/github';
@@ -30,7 +31,6 @@ const RootLayout: React.FC<Props> = ({ children }) => {
       </head>
       <body className={`h-full min-h-full bg-white dark:bg-gray-900 ${inter.className}`}>
         {children}
-        <Toaster />
         {process.env.NODE_ENV !== 'production' && <SizeIndicator />}
         <div className="fixed bottom-2 right-2 items-center justify-end p-2">
           <Link
@@ -41,6 +41,8 @@ const RootLayout: React.FC<Props> = ({ children }) => {
             <GithubIcon className="dark:fill-white" />
           </Link>
         </div>
+        <Toaster />
+        <Analytics />
       </body>
     </html>
   );
