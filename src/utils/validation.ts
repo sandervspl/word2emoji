@@ -11,7 +11,7 @@ export async function validatePrompt(prompt: string) {
     };
   }
 
-  if (/[^a-zA-Z ]/.test(prompt)) {
+  if (/[^a-zA-Z0-9 ]/.test(prompt)) {
     return {
       error: 'Please enter a word without special characters',
     };
