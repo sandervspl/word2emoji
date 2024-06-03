@@ -10,6 +10,7 @@ type Props = {
 export const EmojiButton: React.FC<Props> = (props) => {
   return (
     <button
+      type="button"
       className="aspect-square rounded-md p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
       onClick={() => {
         toast.promise(navigator.clipboard.writeText(props.emoji), {

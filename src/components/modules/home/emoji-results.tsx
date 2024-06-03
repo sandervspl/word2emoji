@@ -37,6 +37,7 @@ export const EmojiResults: React.FC<Props> = (props) => {
       {props.emojis.map((emoji, i) => (
         <button
           key={i}
+          type="button"
           className="flex flex-col items-center rounded-md p-4 text-gray-900 transition-colors hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800"
           onClick={() => {
             toast.promise(navigator.clipboard.writeText(emoji), {
