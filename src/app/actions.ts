@@ -9,12 +9,12 @@ export async function sendToOpenAI(prompt: string) {
   const openai = new OpenAI();
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-4o',
+    model: 'gpt-4o-mini',
     messages: [
       {
         role: 'system',
         content:
-          'The user will send you a phrase. Reply with 4 unique emojis that are relevant to the prompt. Separate them with commas. Do NOT reply like this a conversation.',
+          'The user will send you a phrase. Reply with 4 unique emojis that are relevant to the prompt. Separate them with commas or a puppy dies. Do NOT reply like this a conversation.',
       },
       {
         role: 'user',
