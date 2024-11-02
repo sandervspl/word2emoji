@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { XCircleIcon } from 'lucide-react';
 
 import { EmojiResults } from './emoji-results';
@@ -14,7 +13,7 @@ type Props = {
 };
 
 export const PromptForm = (props: Props) => {
-  const [response, formAction] = ReactDOM.useFormState(props.action, []);
+  const [response, formAction] = React.useActionState(props.action, []);
 
   return (
     <form className="mt-8 flex w-full flex-col justify-center" action={formAction}>
