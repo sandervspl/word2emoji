@@ -10,6 +10,7 @@ import pRetry from 'p-retry';
 
 import { db } from 'src/db';
 import { emojis } from 'src/db/schema';
+import { extractEmojis } from 'src/utils/emoji';
 import { validatePrompt } from 'src/utils/validation';
 import { FormState, PromptForm } from 'modules/home/prompt-form';
 import { RecentlyGenerated } from 'modules/home/recently-generated';
@@ -81,6 +82,13 @@ const Page: React.FC<Props> = async () => {
 
         if (tempResult && tempResult.length > 1) {
           return tempResult;
+        }
+
+        // try extracting from string
+        const emojisFromString = extractEmojis(result);
+
+        if (emojisFromString && emojisFromString.length > 1) {
+          return emojisFromString;
         }
 
         throw new Error('No emojis found');

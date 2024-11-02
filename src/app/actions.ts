@@ -1,31 +1,32 @@
 'use server';
 
-import OpenAI from 'openai';
-
 import { db } from 'src/db';
 import { emojis } from 'src/db/schema';
 
 export async function sendToOpenAI(prompt: string) {
-  const openai = new OpenAI();
-
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [
-      {
-        role: 'system',
-        content:
-          'The user will send you a phrase. Reply with 4 unique emojis that are relevant to the prompt. Separate them with commas or a puppy dies. Do NOT reply like this a conversation.',
+  const response = await fetch(
+    `https://api.prompt-nest.com/prompt/jd76k1t83vq0gvdbqqtw1wpeq973dda5`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.PROMPT_NEST_API_KEY}`,
       },
-      {
-        role: 'user',
-        content: prompt,
-      },
-    ],
-    max_tokens: 200,
-    temperature: 1,
-  });
+      body: JSON.stringify({
+        variables: {
+          prompt,
+        },
+      }),
+    },
+  );
 
-  return response.choices[0]?.message.content;
+  if (!response.ok) {
+    console.error('error prompt-nest', response.status, response.statusText);
+    return;
+  }
+
+  const data = await response.text();
+
+  return data;
 }
 
 export async function savePrompt(prompt: string, result: string[] | undefined) {
