@@ -3,22 +3,27 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { Input } from 'common/input';
-
-type Props = {};
-
-export const PromptInput: React.FC<Props> = (props) => {
+export const PromptInput = () => {
   const { pending } = ReactDOM.useFormStatus();
 
   return (
-    <Input
-      className="mx-auto w-full max-w-screen-sm [&>input]:py-2 [&>input]:text-lg"
-      placeholder="Enter a word"
-      name="prompt"
-      autoFocus
-      min={1}
-      max={20}
-      disabled={pending}
-    />
+    <div className="mx-auto flex w-full max-w-screen-sm overflow-hidden rounded-lg border border-gray-200 bg-white focus-within:ring-2 focus-within:ring-blue-500 dark:border-gray-700 dark:bg-gray-800">
+      <input
+        className="flex-1 bg-transparent px-4 py-2 text-lg outline-none placeholder:text-gray-400 dark:text-white dark:placeholder:text-gray-500"
+        placeholder="Enter a word"
+        name="prompt"
+        autoFocus
+        minLength={1}
+        maxLength={20}
+        disabled={pending}
+      />
+      <button
+        type="submit"
+        disabled={pending}
+        className="px-6 py-2 font-medium text-gray-600 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-300 dark:hover:bg-gray-700"
+      >
+        Generate
+      </button>
+    </div>
   );
 };
