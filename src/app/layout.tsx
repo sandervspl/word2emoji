@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Link from 'next/link';
-import { Analytics } from '@vercel/analytics/react';
+import Script from 'next/script';
 import { Toaster } from 'sonner';
 
 import { GithubIcon } from 'common/github';
@@ -28,6 +28,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
           rel="icon"
           href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>😃</text></svg>"
         />
+        <Script data-domain="word2emoji.com" src="https://plausible.sandervspl.dev/js/script.js" />
       </head>
       <body className={`h-full min-h-full bg-white dark:bg-gray-900 ${inter.className}`}>
         {children}
@@ -42,7 +43,6 @@ const RootLayout: React.FC<Props> = ({ children }) => {
           </Link>
         </div>
         <Toaster />
-        <Analytics />
       </body>
     </html>
   );
