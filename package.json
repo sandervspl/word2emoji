@@ -20,13 +20,13 @@
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.33.0",
     "lucide-react": "^0.428.0",
-    "next": "15.0.2",
+    "next": "15.1.0",
     "next-auth": "^4.24.7",
     "node-emoji": "^2.1.3",
     "openai": "^4.56.0",
     "p-retry": "^6.2.0",
-    "react": "19.0.0-rc-02c0e824-20241028",
-    "react-dom": "19.0.0-rc-02c0e824-20241028",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
     "server-only": "^0.0.1",
     "sonner": "^1.5.0"
   },
@@ -34,8 +34,8 @@
     "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/node": "^20.15.0",
-    "@types/react": "npm:types-react@19.0.0-rc.1",
-    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
+    "@types/react": "19.0.1",
+    "@types/react-dom": "19.0.2",
     "autoprefixer": "^10.4.20",
     "dotenv": "^16.4.5",
     "drizzle-kit": "^0.24.0",
@@ -48,8 +48,8 @@
   },
   "pnpm": {
     "overrides": {
-      "@types/react": "npm:types-react@19.0.0-rc.1",
-      "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1"
+      "@types/react": "19.0.1",
+      "@types/react-dom": "19.0.2"
     }
   }
 }
