@@ -33,13 +33,11 @@ const ratelimit = new Ratelimit({
 });
 
 const Page: React.FC<Props> = async () => {
-  const randomId = Math.floor(Math.random() * 1000000);
-
   async function getEmojis(prevState: FormState, formdata: FormData) {
     'use server';
 
     // Prevent spamming
-    const { success } = await ratelimit.limit(String(randomId));
+    const { success } = await ratelimit.limit(String(formdata.get('randomId')));
     if (!success) {
       return {
         error: 'Please wait a few seconds before trying again',

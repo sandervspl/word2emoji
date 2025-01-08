@@ -13,11 +13,13 @@ type Props = {
 };
 
 export const PromptForm = (props: Props) => {
+  const randomId = React.useRef(Math.floor(Math.random() * 1000000));
   const [response, formAction] = React.useActionState(props.action, []);
 
   return (
     <form className="mt-8 flex w-full flex-col justify-center" action={formAction}>
       <PromptInput />
+      <input type="hidden" name="randomId" value={randomId.current} />
 
       {response && 'error' in response && (
         <div className="mx-auto mt-2 flex items-center gap-2 text-sm text-red-500">
