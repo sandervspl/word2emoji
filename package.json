@@ -5,7 +5,7 @@
   "packageManager": "pnpm@9.12.1",
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "next build --turbopack",
     "start": "next start",
     "prettier": "prettier --write '**/*.{js,ts,tsx}'",
     "analyze": "ANALYZE=true npm run build",
@@ -20,7 +20,7 @@
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.33.0",
     "lucide-react": "^0.428.0",
-    "next": "15.1.0",
+    "next": "15.4.0-canary.36",
     "next-auth": "^4.24.7",
     "node-emoji": "^2.1.3",
     "openai": "^4.56.0",

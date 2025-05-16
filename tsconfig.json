@@ -38,5 +38,5 @@
     "plugins": [{ "name": "next" }]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/**/*.d.ts", ".next/types/**/*.ts"],
-  "exclude": ["dist", ".next", "out", "next.config.js", "node_modules"]
+  "exclude": ["dist", ".next", "out", "next.config.ts", "node_modules"]
 }

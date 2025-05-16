@@ -1,4 +1,3 @@
-import * as i from 'types';
 import * as React from 'react';
 import { Metadata } from 'next';
 import { internal_runWithWaitUntil as waitUntil } from 'next/dist/server/web/internal-edge-wait-until';
@@ -17,9 +16,7 @@ import { RecentlyGenerated } from 'modules/home/recently-generated';
 
 import { savePrompt, sendToOpenAI } from './actions';
 
-type Props = i.NextPageProps;
-
-export const revalidate = 30;
+export const experimental_ppr = true;
 
 export const metadata: Metadata = {
   title: 'Word 2 Emoji',
@@ -32,7 +29,7 @@ const ratelimit = new Ratelimit({
   prefix: 'word2emoji',
 });
 
-const Page: React.FC<Props> = async () => {
+const Page = async () => {
   async function getEmojis(prevState: FormState, formdata: FormData) {
     'use server';
 
@@ -118,10 +115,28 @@ const Page: React.FC<Props> = async () => {
 
         <div className="my-8" />
 
-        <RecentlyGenerated />
+        <div className="mt-8 w-full max-w-screen-md space-y-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            Recently Generated
+          </h2>
+          <ul className="grid w-full grid-cols-2 gap-x-4 gap-y-4 sm:gap-x-20">
+            <React.Suspense fallback={<RecentlyGeneratedFallback />}>
+              <RecentlyGenerated />
+            </React.Suspense>
+          </ul>
+        </div>
       </main>
     </div>
   );
+};
+
+const RecentlyGeneratedFallback = () => {
+  return Array.from({ length: 4 }).map((_, i) => (
+    <li
+      key={i}
+      className="flex h-[116px] w-full animate-pulse flex-col items-center justify-between space-y-2 rounded-md bg-gray-100 p-4 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+    />
+  ));
 };
 
 export default Page;
