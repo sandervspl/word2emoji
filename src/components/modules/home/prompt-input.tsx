@@ -7,9 +7,9 @@ export const PromptInput = () => {
   const { pending } = ReactDOM.useFormStatus();
 
   return (
-    <div className="mx-auto flex w-full max-w-screen-sm overflow-hidden rounded-lg border border-gray-200 bg-white focus-within:ring-2 focus-within:ring-blue-500 dark:border-gray-700 dark:bg-gray-800">
+    <div className="mx-auto flex w-full max-w-(--breakpoint-sm) overflow-hidden rounded-lg border border-gray-200 bg-white focus-within:ring-2 focus-within:ring-blue-500 dark:border-gray-700 dark:bg-gray-800">
       <input
-        className="flex-1 bg-transparent px-4 py-2 text-lg outline-none placeholder:text-gray-400 dark:text-white dark:placeholder:text-gray-500"
+        className="flex-1 bg-transparent px-4 py-2 text-lg outline-hidden placeholder:text-gray-400 dark:text-white dark:placeholder:text-gray-500"
         placeholder="Enter a word"
         name="prompt"
         autoFocus

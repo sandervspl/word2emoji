@@ -106,7 +106,7 @@ const Page = async () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-white dark:bg-gray-900">
-      <main className="flex flex-grow flex-col items-center p-4 text-center md:p-16">
+      <main className="flex grow flex-col items-center p-4 text-center md:p-16">
         <h1 className="mt-20 text-5xl font-bold text-gray-900 dark:text-gray-100">Word ➡️ Emoji</h1>
         <p className="mt-2 text-xl text-gray-600 dark:text-gray-400">
           Turn your words into emojis in a snap!
@@ -120,7 +120,7 @@ const Page = async () => {
           </React.Suspense>
         </div>
 
-        <div className="mt-8 w-full max-w-screen-md space-y-6">
+        <div className="mt-8 w-full max-w-(--breakpoint-md) space-y-6">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             ✨ Recently Generated
           </h2>
