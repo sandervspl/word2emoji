@@ -25,8 +25,8 @@ export const EmojiButton: React.FC<Props> = (props) => {
       >
         {props.emoji}
       </Button>
-      <Tooltip className="rounded-md bg-black p-1 px-2 text-xs text-gray-100 shadow-sm dark:bg-gray-100 dark:text-gray-800">
-        <OverlayArrow className="fill-black dark:fill-gray-100">
+      <Tooltip className="rounded-md bg-blue-500 p-1 px-2 text-xs text-gray-100 shadow-sm">
+        <OverlayArrow className="fill-blue-500">
           <svg width={8} height={8} viewBox="0 0 8 8">
             <path d="M0 0 L4 4 L8 0" />
           </svg>
