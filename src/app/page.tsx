@@ -11,6 +11,7 @@ import { db } from 'src/db';
 import { emojis } from 'src/db/schema';
 import { extractEmojis } from 'src/utils/emoji';
 import { validatePrompt } from 'src/utils/validation';
+import { GeneratedCount } from 'modules/home/generated-count';
 import { FormState, PromptForm } from 'modules/home/prompt-form';
 import { RecentlyGenerated } from 'modules/home/recently-generated';
 
@@ -113,11 +114,15 @@ const Page = async () => {
 
         <PromptForm action={getEmojis} />
 
-        <div className="my-8" />
+        <div className="mb-8 mt-4">
+          <React.Suspense fallback={<div className="h-5 w-[155px] animate-pulse bg-gray-300" />}>
+            <GeneratedCount />
+          </React.Suspense>
+        </div>
 
         <div className="mt-8 w-full max-w-screen-md space-y-6">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            Recently Generated
+            ✨ Recently Generated
           </h2>
           <ul className="grid w-full grid-cols-2 gap-x-4 gap-y-4 sm:gap-x-20">
             <React.Suspense fallback={<RecentlyGeneratedFallback />}>
