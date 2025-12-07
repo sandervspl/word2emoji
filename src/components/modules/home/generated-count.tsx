@@ -1,14 +1,12 @@
 'use cache';
 
-import { unstable_cacheLife as cacheLife } from 'next/cache';
+import { cacheLife } from 'next/cache';
 import { count } from 'drizzle-orm';
 
 import { db } from 'src/db';
 import { emojis } from 'src/db/schema';
 
-type Props = {};
-
-export const GeneratedCount = async (props: Props) => {
+export const GeneratedCount = async () => {
   cacheLife('hours');
 
   const [amountGenerated] =

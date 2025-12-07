@@ -19,14 +19,13 @@
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.33.0",
     "lucide-react": "^0.428.0",
-    "next": "15.4.0-canary.36",
-    "next-auth": "^4.24.7",
+    "next": "16.0.7",
     "node-emoji": "^2.1.3",
     "openai": "^4.56.0",
     "p-retry": "^6.2.0",
-    "react": "19.0.0",
+    "react": "19.2.1",
     "react-aria-components": "^1.8.0",
-    "react-dom": "19.0.0",
+    "react-dom": "19.2.1",
     "server-only": "^0.0.1",
     "sonner": "^1.5.0"
   },
@@ -35,8 +34,8 @@
     "@tailwindcss/postcss": "^4.1.7",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/node": "^20.15.0",
-    "@types/react": "19.0.1",
-    "@types/react-dom": "19.0.2",
+    "@types/react": "19.2.1",
+    "@types/react-dom": "19.2.1",
     "dotenv": "^16.4.5",
     "drizzle-kit": "^0.24.0",
     "postcss": "^8.4.41",
@@ -48,8 +47,8 @@
   },
   "pnpm": {
     "overrides": {
-      "@types/react": "19.0.1",
-      "@types/react-dom": "19.0.2"
+      "@types/react": "19.2.1",
+      "@types/react-dom": "19.2.1"
     }
   }
 }

@@ -17,8 +17,6 @@ import { RecentlyGenerated } from 'modules/home/recently-generated';
 
 import { savePrompt, sendToOpenAI } from './actions';
 
-export const experimental_ppr = true;
-
 export const metadata: Metadata = {
   title: 'Word 2 Emoji',
   description: 'Turn your words into emojis in a snap!',
@@ -114,7 +112,7 @@ const Page = async () => {
 
         <PromptForm action={getEmojis} />
 
-        <div className="mb-8 mt-4">
+        <div className="mt-4 mb-8">
           <React.Suspense fallback={<div className="h-5 w-[155px] animate-pulse bg-gray-300" />}>
             <GeneratedCount />
           </React.Suspense>

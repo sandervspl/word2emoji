@@ -7,11 +7,7 @@ const config: NextConfig = {
   devIndicators: {
     position: 'bottom-left',
   },
-  experimental: {
-    ppr: 'incremental',
-    clientSegmentCache: true,
-    dynamicIO: true,
-  },
+  cacheComponents: true,
   output: 'standalone',
 };
 
