@@ -11,7 +11,7 @@ const openai = new OpenAI({
 });
 
 // System prompt for emoji generation
-const EMOJI_SYSTEM_PROMPT = `You are an emoji generator. Given a word or short phrase, respond with 3-5 relevant emojis that represent or relate to the input.
+const EMOJI_SYSTEM_PROMPT = `You are an emoji generator. Given a word or short phrase, respond with at most 4 relevant emojis that represent or relate to the input.
 
 Rules:
 - Only respond with emojis, separated by commas
@@ -22,10 +22,10 @@ Rules:
 
 Example:
 Input: "happy"
-Output: 😊,😄,🎉,✨,💫
+Output: 😊,😄,🎉,✨
 
 Input: "coffee"
-Output: ☕,🫘,😌,🌅,💼`;
+Output: ☕,🫘,😌,🌅`;
 
 /**
  * Generates emojis for a given prompt using OpenAI's GPT model.
