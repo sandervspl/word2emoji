@@ -17,13 +17,17 @@ export const WordResults: React.FC<Props> = (props) => {
 
   if (pending) {
     return (
-      <div className="mx-auto mt-8 flex w-full max-w-(--breakpoint-md) flex-wrap justify-center gap-3">
-        {[0, 0, 0, 0, 0, 0].map((_, i) => (
-          <div
-            key={i}
-            className="h-10 w-24 animate-pulse rounded-full bg-gray-200 dark:bg-gray-700"
-          />
-        ))}
+      <div className="mx-auto mt-8 flex w-full max-w-(--breakpoint-md) flex-col items-center gap-3">
+        <div className="flex flex-wrap justify-center gap-3">
+          {[16, 20, 24, 18, 22, 20].map((width, i) => (
+            <div
+              key={i}
+              className="h-10 animate-pulse rounded-full border border-gray-200 bg-gray-100 dark:border-gray-700 dark:bg-gray-800"
+              style={{ width: `${width * 4}px` }}
+            />
+          ))}
+        </div>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Finding words...</p>
       </div>
     );
   }
