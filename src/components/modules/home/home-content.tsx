@@ -1,17 +1,13 @@
 'use client';
 
+import { getEmojis, getWords } from 'src/app/actions';
 import { useMode } from 'src/hooks/use-mode';
 
 import { ModeToggle } from './mode-toggle';
-import { FormState, PromptForm } from './prompt-form';
-import { ReverseFormState, ReverseLookupForm } from './reverse-lookup-form';
+import { PromptForm } from './prompt-form';
+import { ReverseLookupForm } from './reverse-lookup-form';
 
-type Props = {
-  getEmojis: (prevState: FormState, formdata: FormData) => Promise<FormState>;
-  getWords: (prevState: ReverseFormState, formdata: FormData) => Promise<ReverseFormState>;
-};
-
-export const HomeContent = ({ getEmojis, getWords }: Props) => {
+export const HomeContent = () => {
   const [mode, setMode] = useMode();
 
   return (

@@ -5,7 +5,7 @@ import { desc } from 'drizzle-orm';
 
 import { db } from 'src/db';
 import { emojis, emojiWords } from 'src/db/schema';
-import { Mode } from 'src/hooks/use-mode';
+import { Mode } from 'src/utils/constants';
 
 import { EmojiButton } from './emoji-button';
 

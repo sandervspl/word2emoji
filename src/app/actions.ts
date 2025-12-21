@@ -1,9 +1,25 @@
 'use server';
 
+import { after } from 'next/server';
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
+import { eq } from 'drizzle-orm';
+import * as emoji from 'node-emoji';
 import OpenAI from 'openai';
+import pRetry from 'p-retry';
 
 import { db } from 'src/db';
 import { emojis, emojiWords } from 'src/db/schema';
+import { extractEmojis, validateEmojiInput } from 'src/utils/emoji';
+import { validatePrompt } from 'src/utils/validation';
+import { FormState } from 'modules/home/prompt-form';
+import { ReverseFormState } from 'modules/home/reverse-lookup-form';
+
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(10, '10 s'),
+  prefix: 'word2emoji',
+});
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -201,4 +217,141 @@ export async function saveEmojiWords(emoji: string, words: string[]) {
     })
     .onConflictDoNothing()
     .execute();
+}
+
+export async function getEmojis(_prevState: FormState, formdata: FormData) {
+  'use server';
+
+  // Prevent spamming
+  const { success } = await ratelimit.limit(String(formdata.get('randomId')));
+  if (!success) {
+    return {
+      error: 'Please wait a few seconds before trying again',
+    };
+  }
+
+  const prompt = formdata.get('prompt') as string;
+  const validateResult = await validatePrompt(prompt);
+
+  // Validate prompt
+  if (validateResult && 'error' in validateResult) {
+    return validateResult;
+  }
+
+  // Check if the prompt is stored in db
+  const cached = await db.query.emojis.findFirst({
+    columns: { emoji: true },
+    where: eq(emojis.word, prompt),
+  });
+
+  if (cached) {
+    return cached.emoji.split(',').map((e) => e.trim());
+  }
+
+  // Max 3 tries to get a result
+  const emojisResult = await pRetry(
+    async () => {
+      const result = await sendToOpenAI(prompt);
+
+      // Check if we got a result and result contains emojis
+      if (!result || emoji.strip(result) === result) {
+        throw new Error('No emojis found');
+      }
+
+      if (result.length > 20) {
+        throw new Error('Text too long');
+      }
+
+      const tempResult = result?.split(',').map((e) => e.trim());
+
+      if (tempResult && tempResult.length > 1) {
+        return tempResult;
+      }
+
+      // try extracting from string
+      const emojisFromString = extractEmojis(result);
+
+      if (emojisFromString && emojisFromString.length > 1) {
+        return emojisFromString;
+      }
+
+      throw new Error('No emojis found');
+    },
+    { retries: 3 },
+  );
+
+  if (emojisResult == null) {
+    return {
+      error: 'Something went wrong, please try again',
+    };
+  }
+
+  // Insert to db in the background while returning the result to the user
+  after(() => savePrompt(prompt, emojisResult));
+
+  return emojisResult;
+}
+
+export async function getWords(_prevState: ReverseFormState, formdata: FormData) {
+  'use server';
+
+  // Prevent spamming
+  const { success } = await ratelimit.limit(String(formdata.get('randomId')));
+  if (!success) {
+    return {
+      error: 'Please wait a few seconds before trying again',
+    };
+  }
+
+  const emojiInput = formdata.get('emoji') as string;
+
+  // Validate emoji input
+  const validation = validateEmojiInput(emojiInput);
+  if (!validation.isValid) {
+    return {
+      error: validation.error || 'Invalid emoji input',
+    };
+  }
+
+  // Use the joined emojis as the cache key
+  const cacheKey = validation.emojis.join('');
+
+  // Check if the emoji is stored in db
+  const cached = await db.query.emojiWords.findFirst({
+    columns: { words: true },
+    where: eq(emojiWords.emoji, cacheKey),
+  });
+
+  if (cached) {
+    try {
+      return JSON.parse(cached.words) as string[];
+    } catch {
+      // If parsing fails, continue to fetch from AI
+    }
+  }
+
+  // Max 3 tries to get a result
+  const wordsResult = await pRetry(
+    async () => {
+      const result = await sendEmojiToOpenAI(cacheKey);
+
+      if (!result || result.length === 0) {
+        throw new Error('No words found');
+      }
+
+      return result;
+    },
+    { retries: 3 },
+  );
+
+  if (wordsResult == null) {
+    return {
+      error: 'Something went wrong, please try again',
+    };
+  }
+
+  // Insert to db in the background while returning the result to the user
+  after(() => saveEmojiWords(cacheKey, wordsResult));
+
+  return wordsResult;
 }

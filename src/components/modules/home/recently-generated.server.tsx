@@ -1,5 +1,3 @@
-'use cache';
-
 import * as React from 'react';
 import { cacheLife } from 'next/cache';
 
@@ -12,18 +10,13 @@ type Props = {
 };
 
 export const RecentlyGeneratedServer = async ({ searchParams }: Props) => {
-  cacheLife('seconds');
   const params = await searchParams;
   const mode = parseModeFromParam(params.mode);
 
-  return (
-    <React.Suspense key={mode} fallback={<RecentlyGeneratedFallback />}>
-      <RecentlyGenerated mode={mode} />
-    </React.Suspense>
-  );
+  return <RecentlyGenerated mode={mode} />;
 };
 
-const RecentlyGeneratedFallback = () => {
+export const RecentlyGeneratedFallback = () => {
   return Array.from({ length: 4 }).map((_, i) => (
     <li
       key={i}
