@@ -21,7 +21,9 @@ const Page = async ({ searchParams }: PageProps) => {
   return (
     <div className="flex min-h-screen flex-col bg-white dark:bg-gray-900">
       <main className="flex grow flex-col items-center p-4 text-center md:p-16">
-        <HomeContent />
+        <React.Suspense fallback={null}>
+          <HomeContent />
+        </React.Suspense>
 
         <div className="mt-4 mb-8">
           <React.Suspense fallback={<GeneratedCountFallback />}>
