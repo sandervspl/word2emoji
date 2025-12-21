@@ -1,8 +1,4 @@
-'use client';
-
-import * as React from 'react';
-
-import { Mode } from 'src/hooks/use-mode';
+import { Mode } from 'src/utils/constants';
 
 type Props = {
   mode: Mode;
