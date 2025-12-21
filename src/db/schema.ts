@@ -13,3 +13,18 @@ export const emojis = sqliteTable(
     word_idx: index('word_idx').on(table.word),
   }),
 );
+
+// Table for emoji-to-words reverse lookup cache
+export const emojiWords = sqliteTable(
+  'emoji_words',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    emoji: text('emoji').notNull(),
+    words: text('words').notNull(), // JSON array of word suggestions
+    created_at: text('created_at').notNull(),
+  },
+  (table) => ({
+    emoji_unq: unique('emoji_unq').on(table.emoji),
+    emoji_idx: index('emoji_idx').on(table.emoji),
+  }),
+);

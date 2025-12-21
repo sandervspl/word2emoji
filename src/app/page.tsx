@@ -8,14 +8,16 @@ import * as emoji from 'node-emoji';
 import pRetry from 'p-retry';
 
 import { db } from 'src/db';
-import { emojis } from 'src/db/schema';
-import { extractEmojis } from 'src/utils/emoji';
+import { emojis, emojiWords } from 'src/db/schema';
+import { extractEmojis, validateEmojiInput } from 'src/utils/emoji';
 import { validatePrompt } from 'src/utils/validation';
 import { GeneratedCount } from 'modules/home/generated-count';
-import { FormState, PromptForm } from 'modules/home/prompt-form';
-import { RecentlyGenerated } from 'modules/home/recently-generated';
+import { HomeContent } from 'modules/home/home-content';
+import { FormState } from 'modules/home/prompt-form';
+import { RecentlyGeneratedServer } from 'modules/home/recently-generated.server';
+import { ReverseFormState } from 'modules/home/reverse-lookup-form';
 
-import { savePrompt, sendToOpenAI } from './actions';
+import { saveEmojiWords, savePrompt, sendEmojiToOpenAI, sendToOpenAI } from './actions';
 
 export const metadata: Metadata = {
   title: 'Word 2 Emoji',
@@ -28,7 +30,11 @@ const ratelimit = new Ratelimit({
   prefix: 'word2emoji',
 });
 
-const Page = async () => {
+type PageProps = {
+  searchParams: Promise<{ mode?: string }>;
+};
+
+const Page = async ({ searchParams }: PageProps) => {
   async function getEmojis(prevState: FormState, formdata: FormData) {
     'use server';
 
@@ -102,15 +108,74 @@ const Page = async () => {
     return emojisResult;
   }
 
+  async function getWords(prevState: ReverseFormState, formdata: FormData) {
+    'use server';
+
+    // Prevent spamming
+    const { success } = await ratelimit.limit(String(formdata.get('randomId')));
+    if (!success) {
+      return {
+        error: 'Please wait a few seconds before trying again',
+      };
+    }
+
+    const emojiInput = formdata.get('emoji') as string;
+
+    // Validate emoji input
+    const validation = validateEmojiInput(emojiInput);
+    if (!validation.isValid) {
+      return {
+        error: validation.error || 'Invalid emoji input',
+      };
+    }
+
+    // Use the joined emojis as the cache key
+    const cacheKey = validation.emojis.join('');
+
+    // Check if the emoji is stored in db
+    const cached = await db.query.emojiWords.findFirst({
+      columns: { words: true },
+      where: eq(emojiWords.emoji, cacheKey),
+    });
+
+    if (cached) {
+      try {
+        return JSON.parse(cached.words) as string[];
+      } catch {
+        // If parsing fails, continue to fetch from AI
+      }
+    }
+
+    // Max 3 tries to get a result
+    const wordsResult = await pRetry(
+      async () => {
+        const result = await sendEmojiToOpenAI(cacheKey);
+
+        if (!result || result.length === 0) {
+          throw new Error('No words found');
+        }
+
+        return result;
+      },
+      { retries: 3 },
+    );
+
+    if (wordsResult == null) {
+      return {
+        error: 'Something went wrong, please try again',
+      };
+    }
+
+    // Insert to db in the background while returning the result to the user
+    waitUntil(() => saveEmojiWords(cacheKey, wordsResult));
+
+    return wordsResult;
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-white dark:bg-gray-900">
       <main className="flex grow flex-col items-center p-4 text-center md:p-16">
-        <h1 className="mt-20 text-5xl font-bold text-gray-900 dark:text-gray-100">Word ➡️ Emoji</h1>
-        <p className="mt-2 text-xl text-gray-600 dark:text-gray-400">
-          Turn your words into emojis in a snap!
-        </p>
-
-        <PromptForm action={getEmojis} />
+        <HomeContent getEmojis={getEmojis} getWords={getWords} />
 
         <div className="mt-4 mb-8">
           <React.Suspense fallback={<div className="h-5 w-[155px] animate-pulse bg-gray-300" />}>
@@ -123,23 +188,12 @@ const Page = async () => {
             ✨ Recently Generated
           </h2>
           <ul className="grid w-full grid-cols-2 gap-x-4 gap-y-4 sm:gap-x-20">
-            <React.Suspense fallback={<RecentlyGeneratedFallback />}>
-              <RecentlyGenerated />
-            </React.Suspense>
+            <RecentlyGeneratedServer searchParams={searchParams} />
           </ul>
         </div>
       </main>
     </div>
   );
-};
-
-const RecentlyGeneratedFallback = () => {
-  return Array.from({ length: 4 }).map((_, i) => (
-    <li
-      key={i}
-      className="flex h-[116px] w-full animate-pulse flex-col items-center justify-between space-y-2 rounded-md bg-gray-100 p-4 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
-    />
-  ));
 };
 
 export default Page;

@@ -1,3 +1,5 @@
+import { Mode, modes } from './constants';
+
 export async function validatePrompt(prompt: string) {
   // check for profanity
   const response = await fetch(
@@ -28,4 +30,12 @@ export async function validatePrompt(prompt: string) {
       error: 'Please enter a prompt less than 20 characters',
     };
   }
+}
+
+/**
+ * Validates if a string is a valid mode value.
+ * Useful for server-side validation of URL parameters.
+ */
+export function isValidMode(value: unknown): value is Mode {
+  return typeof value === 'string' && modes.includes(value as Mode);
 }
