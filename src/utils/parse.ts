@@ -1,5 +1,4 @@
-import { DEFAULT_MODE } from './constants';
-import type { Mode } from './constants';
+import { DEFAULT_MODE, type Mode } from './constants';
 import { isValidMode } from './validation';
 
 /**

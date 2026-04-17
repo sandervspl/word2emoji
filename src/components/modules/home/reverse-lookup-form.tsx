@@ -5,8 +5,8 @@ import { useServerFn } from '@tanstack/react-start';
 import { XCircleIcon } from 'lucide-react';
 
 import { EmojiInput } from './emoji-input';
-import { WordResults } from './word-results';
 import type { ReverseFormState } from './home.types';
+import { WordResults } from './word-results';
 
 type Props = {
   action: (opts: { data: FormData }) => Promise<ReverseFormState>;

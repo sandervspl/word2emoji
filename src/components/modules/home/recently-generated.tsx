@@ -1,6 +1,5 @@
-import type { HomePageData } from './home.types';
-
 import { EmojiButton } from './emoji-button';
+import type { HomePageData } from './home.types';
 
 type Props = Pick<HomePageData, 'mode' | 'recentlyGenerated'>;
 

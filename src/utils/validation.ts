@@ -1,5 +1,4 @@
-import { modes } from './constants';
-import type { Mode } from './constants';
+import { modes, type Mode } from './constants';
 
 export async function validatePrompt(prompt: string) {
   // check for profanity

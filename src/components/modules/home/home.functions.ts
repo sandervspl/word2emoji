@@ -1,4 +1,5 @@
 import { createServerFn } from '@tanstack/react-start';
+
 import type { Mode } from 'src/utils/constants';
 
 import { generateEmojis, generateWords, loadHomePageData } from './home.server';

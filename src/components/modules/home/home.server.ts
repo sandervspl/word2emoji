@@ -8,9 +8,9 @@ import pRetry from 'p-retry';
 import { db } from 'src/db';
 import { emojis, emojiWords } from 'src/db/schema';
 import { getCachedValue } from 'src/utils/cache.server';
+import type { Mode } from 'src/utils/constants';
 import { extractEmojis, validateEmojiInput } from 'src/utils/emoji';
 import { validatePrompt } from 'src/utils/validation';
-import type { Mode } from 'src/utils/constants';
 
 import type {
   EmojiToWordRecentItem,

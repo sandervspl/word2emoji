@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 
-import { GeneratedCount } from 'modules/home/generated-count';
-import { getHomePageData } from 'modules/home/home.functions';
-import { HomeContent } from 'modules/home/home-content';
-import { RecentlyGenerated } from 'modules/home/recently-generated';
 import { parseModeFromParam } from 'src/utils/parse';
+import { GeneratedCount } from 'modules/home/generated-count';
+import { HomeContent } from 'modules/home/home-content';
+import { getHomePageData } from 'modules/home/home.functions';
+import { RecentlyGenerated } from 'modules/home/recently-generated';
 
 export const Route = createFileRoute('/')({
   validateSearch: (search: Record<string, unknown>) => ({
