@@ -1,28 +1,45 @@
 'use client';
 
 import * as React from 'react';
+import { useServerFn } from '@tanstack/react-start';
 import { XCircleIcon } from 'lucide-react';
 
 import { EmojiResults } from './emoji-results';
+import type { FormState } from './home.types';
 import { PromptInput } from './prompt-input';
 
-export type FormState = string[] | { error: string } | undefined;
-
 type Props = {
-  action: (prevState: FormState, formdata: FormData) => Promise<FormState>;
+  action: (opts: { data: FormData }) => Promise<FormState>;
 };
 
 export const PromptForm = (props: Props) => {
+  const submitPrompt = useServerFn(props.action);
   const [randomId, setRandomId] = React.useState('');
-  const [response, formAction] = React.useActionState(props.action, []);
+  const [response, setResponse] = React.useState<FormState>([]);
+  const [pending, startTransition] = React.useTransition();
 
   React.useEffect(() => {
     setRandomId(crypto.randomUUID());
   }, []);
 
   return (
-    <form className="mt-8 flex w-full flex-col justify-center" action={formAction}>
-      <PromptInput />
+    <form
+      className="mt-8 flex w-full flex-col justify-center"
+      onSubmit={(event) => {
+        event.preventDefault();
+
+        const formData = new FormData(event.currentTarget);
+
+        startTransition(async () => {
+          setResponse(
+            await submitPrompt({
+              data: formData,
+            }),
+          );
+        });
+      }}
+    >
+      <PromptInput pending={pending} />
       <input type="hidden" name="randomId" value={randomId} />
 
       {response && 'error' in response && (
@@ -31,7 +48,7 @@ export const PromptForm = (props: Props) => {
           {response.error}
         </div>
       )}
-      {Array.isArray(response) && <EmojiResults emojis={response || []} />}
+      {Array.isArray(response) && <EmojiResults emojis={response || []} pending={pending} />}
     </form>
   );
 };

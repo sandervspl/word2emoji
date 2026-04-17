@@ -1,15 +1,18 @@
 'use client';
 
-import { getEmojis, getWords } from 'src/app/actions';
-import { useMode } from 'src/hooks/use-mode';
+import type { Mode } from 'src/utils/constants';
 
+import { getEmojis, getWords } from './home.functions';
 import { ModeToggle } from './mode-toggle';
 import { PromptForm } from './prompt-form';
 import { ReverseLookupForm } from './reverse-lookup-form';
 
-export const HomeContent = () => {
-  const [mode, setMode] = useMode();
+type Props = {
+  mode: Mode;
+  onModeChange: (mode: Mode) => void;
+};
 
+export const HomeContent = ({ mode, onModeChange }: Props) => {
   return (
     <>
       <h1 className="mt-20 text-5xl font-bold text-gray-900 dark:text-gray-100">
@@ -23,7 +26,7 @@ export const HomeContent = () => {
       </p>
 
       <div className="mt-6">
-        <ModeToggle mode={mode} onModeChange={setMode} />
+        <ModeToggle mode={mode} onModeChange={onModeChange} />
       </div>
 
       {mode === 'word-to-emoji' ? (

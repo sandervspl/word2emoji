@@ -1,11 +1,12 @@
 'use client';
 
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 
-export const PromptInput = () => {
-  const { pending } = ReactDOM.useFormStatus();
+type Props = {
+  pending: boolean;
+};
 
+export const PromptInput = ({ pending }: Props) => {
   return (
     <div className="mx-auto flex w-full max-w-(--breakpoint-sm) overflow-hidden rounded-lg border border-gray-200 bg-white focus-within:ring-2 focus-within:ring-blue-500 dark:border-gray-700 dark:bg-gray-800">
       <input

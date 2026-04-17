@@ -9,7 +9,7 @@ module.exports = {
   importOrder: [
     '^types$',
     '^(react|react-dom)$',
-    '^next(.*)$',
+    '^@tanstack(.*)$',
     '<THIRD_PARTY_MODULES>',
     '',
     '^(src|vectors|images|services|hooks|queries|store|styles|config|navigators|screens|static)(/.*|$)',

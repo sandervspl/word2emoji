@@ -1,27 +1,27 @@
-import 'styles/globals.css';
-
-import * as i from 'types';
-import * as React from 'react';
-import { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import Link from 'next/link';
-import Script from 'next/script';
-import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router';
 import { Toaster } from 'sonner';
 
 import { GithubIcon } from 'common/github';
 import { SizeIndicator } from 'common/size-indicator';
 
-type Props = i.NextLayoutProps;
+import appCss from 'styles/globals.css?url';
 
-const inter = Inter({ subsets: ['latin'] });
+export const Route = createRootRoute({
+  head: () => ({
+    meta: [
+      { charSet: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { title: 'Word2Emoji' },
+    ],
+    links: [
+      { rel: 'stylesheet', href: appCss },
+      { rel: 'manifest', href: '/manifest.json' },
+    ],
+  }),
+  shellComponent: RootDocument,
+});
 
-export const metadata: Metadata = {
-  title: 'Word2Emoji',
-  metadataBase: new URL('https://word2emoji.com'),
-};
-
-const RootLayout: React.FC<Props> = ({ children }) => {
+function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="h-full bg-white antialiased dark:bg-gray-900">
       <head>
@@ -29,24 +29,25 @@ const RootLayout: React.FC<Props> = ({ children }) => {
           rel="icon"
           href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>😃</text></svg>"
         />
-        <Script data-domain="word2emoji.com" src="https://plausible.sandervspl.dev/js/script.js" />
+        <script async data-domain="word2emoji.com" src="https://plausible.sandervspl.dev/js/script.js" />
+        <HeadContent />
       </head>
-      <body className={`h-full min-h-full bg-white dark:bg-gray-900 ${inter.className}`}>
-        <NuqsAdapter>{children}</NuqsAdapter>
+      <body className="h-full min-h-full bg-white dark:bg-gray-900">
+        {children}
         {process.env.NODE_ENV !== 'production' && <SizeIndicator />}
         <div className="fixed right-2 bottom-2 items-center justify-end p-2">
-          <Link
+          <a
             href="https://github.com/sandervspl/word2emoji"
             target="_blank"
+            rel="noreferrer"
             className="block size-6"
           >
             <GithubIcon className="dark:fill-white" />
-          </Link>
+          </a>
         </div>
         <Toaster />
+        <Scripts />
       </body>
     </html>
   );
-};
-
-export default RootLayout;
+}

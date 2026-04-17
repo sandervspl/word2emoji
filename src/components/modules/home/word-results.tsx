@@ -1,18 +1,16 @@
 'use client';
 
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 
 import { CopyableButton } from 'common/copyable-button';
 
 type Props = {
   words: string[];
+  pending: boolean;
 };
 
-export const WordResults: React.FC<Props> = (props) => {
-  const { pending } = ReactDOM.useFormStatus();
-
-  if (props.words.length === 0 && !pending) {
+export const WordResults: React.FC<Props> = ({ words, pending }) => {
+  if (words.length === 0 && !pending) {
     return null;
   }
 
@@ -35,7 +33,7 @@ export const WordResults: React.FC<Props> = (props) => {
 
   return (
     <div className="mx-auto mt-8 flex w-full max-w-(--breakpoint-md) flex-wrap justify-center gap-3">
-      {props.words.map((word, i) => (
+      {words.map((word, i) => (
         <CopyableButton
           key={i}
           copyText={word}

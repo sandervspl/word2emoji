@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "word2emoji",
+  "compatibility_date": "2026-04-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "@tanstack/react-start/server-entry",
+  "observability": {
+    "enabled": true
+  },
+  "routes": [
+    {
+      "pattern": "word2emoji.com",
+      "custom_domain": true
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-import { Mode } from 'src/utils/constants';
+import type { Mode } from 'src/utils/constants';
 
 type Props = {
   mode: Mode;

@@ -1,19 +1,17 @@
 'use client';
 
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { unemojify } from 'node-emoji';
 
 import { CopyableButton } from 'common/copyable-button';
 
 type Props = {
   emojis: string[];
+  pending: boolean;
 };
 
-export const EmojiResults: React.FC<Props> = (props) => {
-  const { pending } = ReactDOM.useFormStatus();
-
-  if (props.emojis.length === 0 && !pending) {
+export const EmojiResults: React.FC<Props> = ({ emojis, pending }) => {
+  if (emojis.length === 0 && !pending) {
     return null;
   }
 
@@ -38,7 +36,7 @@ export const EmojiResults: React.FC<Props> = (props) => {
 
   return (
     <div className="mx-auto mt-8 grid w-full max-w-(--breakpoint-md) grid-cols-2 gap-8 md:grid-cols-4">
-      {props.emojis.map((emoji, i) => (
+      {emojis.map((emoji, i) => (
         <CopyableButton
           key={i}
           copyText={emoji}
