@@ -12,6 +12,7 @@ export const EmojiInput = ({ pending }: Props) => {
         placeholder="Enter emoji(s) 😊👨‍💻🌅"
         name="emoji"
         autoFocus
+        required
         disabled={pending}
       />
       <button

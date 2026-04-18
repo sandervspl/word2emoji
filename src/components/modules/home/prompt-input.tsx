@@ -12,7 +12,8 @@ export const PromptInput = ({ pending }: Props) => {
         placeholder="Enter a word"
         name="prompt"
         autoFocus
-        minLength={1}
+        required
+        minLength={2}
         maxLength={20}
         disabled={pending}
       />

@@ -4,6 +4,7 @@ import { count, desc, eq } from 'drizzle-orm';
 import * as emoji from 'node-emoji';
 import OpenAI from 'openai';
 import pRetry from 'p-retry';
+import { getRequest } from '@tanstack/react-start/server';
 
 import { db } from 'src/db';
 import { emojis, emojiWords } from 'src/db/schema';
@@ -85,6 +86,26 @@ function getOpenAI() {
   });
 
   return openai;
+}
+
+function getRateLimitKey(scope: 'word-to-emoji' | 'emoji-to-word') {
+  try {
+    const request = getRequest();
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    const clientIp =
+      request.headers.get('cf-connecting-ip') ??
+      request.headers.get('true-client-ip') ??
+      forwardedFor?.split(',')[0]?.trim();
+    const userAgent = request.headers.get('user-agent') ?? 'unknown-user-agent';
+
+    return `${scope}:${clientIp ?? userAgent}`;
+  } catch {
+    return `${scope}:unknown-client`;
+  }
+}
+
+function normalizePrompt(prompt: string) {
+  return prompt.trim().replace(/\s+/g, ' ');
 }
 
 async function sendToOpenAI(prompt: string): Promise<string | undefined> {
@@ -311,14 +332,14 @@ export async function loadHomePageData(mode: Mode): Promise<HomePageData> {
 }
 
 export async function generateEmojis(formData: FormData): Promise<FormState> {
-  const { success } = await getRatelimit().limit(String(formData.get('randomId')));
+  const { success } = await getRatelimit().limit(getRateLimitKey('word-to-emoji'));
   if (!success) {
     return {
       error: 'Please wait a few seconds before trying again',
     };
   }
 
-  const prompt = String(formData.get('prompt') ?? '');
+  const prompt = normalizePrompt(String(formData.get('prompt') ?? ''));
   const validation = await validatePrompt(prompt);
 
   if (validation && 'error' in validation) {
@@ -374,14 +395,14 @@ export async function generateEmojis(formData: FormData): Promise<FormState> {
 }
 
 export async function generateWords(formData: FormData): Promise<ReverseFormState> {
-  const { success } = await getRatelimit().limit(String(formData.get('randomId')));
+  const { success } = await getRatelimit().limit(getRateLimitKey('emoji-to-word'));
   if (!success) {
     return {
       error: 'Please wait a few seconds before trying again',
     };
   }
 
-  const emojiInput = String(formData.get('emoji') ?? '');
+  const emojiInput = String(formData.get('emoji') ?? '').trim();
   const validation = validateEmojiInput(emojiInput);
 
   if (!validation.isValid) {

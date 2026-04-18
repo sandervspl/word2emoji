@@ -12,13 +12,8 @@ type Props = {
 
 export const ReverseLookupForm = (props: Props) => {
   const submitLookup = useServerFn(props.action);
-  const [randomId, setRandomId] = React.useState('');
   const [response, setResponse] = React.useState<ReverseFormState>(undefined);
   const [pending, startTransition] = React.useTransition();
-
-  React.useEffect(() => {
-    setRandomId(crypto.randomUUID());
-  }, []);
 
   return (
     <form
@@ -38,7 +33,6 @@ export const ReverseLookupForm = (props: Props) => {
       }}
     >
       <EmojiInput pending={pending} />
-      <input type="hidden" name="randomId" value={randomId} />
 
       {response && 'error' in response && (
         <div className="mx-auto mt-2 flex items-center gap-2 text-sm text-red-500">

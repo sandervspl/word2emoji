@@ -7,6 +7,24 @@
 // - Keycap sequences
 const EMOJI_REGEX =
   /(?:\p{Emoji_Presentation}|\p{Emoji}\uFE0F)(?:\u200D(?:\p{Emoji_Presentation}|\p{Emoji}\uFE0F))*|\p{Emoji_Modifier_Base}(?:\p{Emoji_Modifier})?(?:\u200D(?:\p{Emoji_Presentation}|\p{Emoji}\uFE0F)(?:\u200D(?:\p{Emoji_Presentation}|\p{Emoji}\uFE0F))*)*/gu;
+const EMOJI_SEGMENT_REGEX = /\p{Emoji_Presentation}/u;
+const EMOJI_FORMATTING_REGEX = /[\u200D\uFE0F\u20E3\u{E0020}-\u{E007F}]/u;
+const WHITESPACE_ONLY_REGEX = /^\s+$/u;
+
+const graphemeSegmenter =
+  typeof Intl !== 'undefined' ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
+
+function segmentGraphemes(text: string) {
+  if (!graphemeSegmenter) {
+    return Array.from(text);
+  }
+
+  return Array.from(graphemeSegmenter.segment(text), ({ segment }) => segment);
+}
+
+function isEmojiSegment(segment: string) {
+  return EMOJI_SEGMENT_REGEX.test(segment) || EMOJI_FORMATTING_REGEX.test(segment);
+}
 
 export function extractEmojis(text: string) {
   // This regex pattern matches most emojis, including skin tone and gender variations
@@ -24,8 +42,15 @@ export function extractEmojis(text: string) {
  * and skin tone/gender variations from text
  */
 export function extractCompoundEmojis(text: string): string[] {
-  const matches = text.match(EMOJI_REGEX);
-  return matches || [];
+  const graphemes = segmentGraphemes(text);
+  const segmentedMatches = graphemes.filter((segment) => isEmojiSegment(segment));
+
+  if (segmentedMatches.length > 0) {
+    return segmentedMatches;
+  }
+
+  const regexMatches = text.match(EMOJI_REGEX);
+  return regexMatches || [];
 }
 
 /**
@@ -37,8 +62,10 @@ export function validateEmojiInput(input: string): {
   emojis: string[];
   error?: string;
 } {
+  const normalizedInput = input.trim();
+
   // Check for empty input
-  if (!input || input.trim().length === 0) {
+  if (!normalizedInput) {
     return {
       isValid: false,
       emojis: [],
@@ -47,7 +74,7 @@ export function validateEmojiInput(input: string): {
   }
 
   // Extract emojis using compound emoji extraction
-  const emojis = extractCompoundEmojis(input.trim());
+  const emojis = extractCompoundEmojis(normalizedInput);
 
   // Check if any emojis were found
   if (emojis.length === 0) {
@@ -68,11 +95,10 @@ export function validateEmojiInput(input: string): {
   }
 
   // Check if input contains non-emoji characters (excluding whitespace)
-  const strippedInput = input.replace(/\s/g, '');
-  const emojiJoined = emojis.join('');
-
-  // Allow some flexibility for variation selectors and ZWJ that might not be captured
-  if (strippedInput.length > emojiJoined.length * 2) {
+  const hasNonEmojiContent = segmentGraphemes(normalizedInput).some(
+    (segment) => !WHITESPACE_ONLY_REGEX.test(segment) && !isEmojiSegment(segment),
+  );
+  if (hasNonEmojiContent) {
     return {
       isValid: false,
       emojis: [],
