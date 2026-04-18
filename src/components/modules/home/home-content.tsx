@@ -1,5 +1,3 @@
-'use client';
-
 import type { Mode } from 'src/utils/constants';
 
 import { getEmojis, getWords } from './home.functions';

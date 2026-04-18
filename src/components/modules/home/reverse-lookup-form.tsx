@@ -1,5 +1,3 @@
-'use client';
-
 import * as React from 'react';
 import { useServerFn } from '@tanstack/react-start';
 import { XCircleIcon } from 'lucide-react';
