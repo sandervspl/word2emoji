@@ -7,6 +7,9 @@
   "observability": {
     "enabled": true,
   },
+  "secrets": {
+    "required": ["OPENAI_API_KEY", "TURSO_DB_URL", "TURSO_AUTH_TOKEN"],
+  },
   "routes": [
     {
       "pattern": "word2emoji.com",
@@ -17,6 +20,17 @@
     {
       "binding": "KV",
       "id": "45bacdbdc5e74d53af2f269a65d39dce",
+    },
+  ],
+  "ratelimits": [
+    {
+      "name": "RATE_LIMITER",
+      // Must be unique within your Cloudflare account.
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 10,
+        "period": 10,
+      },
     },
   ],
 }

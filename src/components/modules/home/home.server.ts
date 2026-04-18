@@ -1,5 +1,4 @@
-import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis';
+import { env } from 'cloudflare:workers';
 import { count, desc, eq } from 'drizzle-orm';
 import * as emoji from 'node-emoji';
 import OpenAI from 'openai';
@@ -25,7 +24,6 @@ const MINUTE_MS = 60_000;
 const HOUR_MS = 60 * MINUTE_MS;
 const DAY_MS = 24 * HOUR_MS;
 
-let ratelimit: Ratelimit | undefined;
 let openai: OpenAI | undefined;
 
 const EMOJI_SYSTEM_PROMPT = `You are an emoji generator. Given a word or short phrase, respond with at most 4 relevant emojis that represent or relate to the input.
@@ -69,16 +67,6 @@ Output: ["morning", "sunrise coffee", "peaceful", "dawn", "early bird", "relaxin
 
 Input: 🏳️‍🌈
 Output: ["pride", "LGBTQ", "rainbow flag", "equality", "diversity", "inclusion", "celebration"]`;
-
-function getRatelimit() {
-  ratelimit ??= new Ratelimit({
-    redis: Redis.fromEnv(),
-    limiter: Ratelimit.slidingWindow(10, '10 s'),
-    prefix: 'word2emoji',
-  });
-
-  return ratelimit;
-}
 
 function getOpenAI() {
   openai ??= new OpenAI({
@@ -332,7 +320,9 @@ export async function loadHomePageData(mode: Mode): Promise<HomePageData> {
 }
 
 export async function generateEmojis(formData: FormData): Promise<FormState> {
-  const { success } = await getRatelimit().limit(getRateLimitKey('word-to-emoji'));
+  const { success } = await env.RATE_LIMITER.limit({
+    key: getRateLimitKey('word-to-emoji'),
+  });
   if (!success) {
     return {
       error: 'Please wait a few seconds before trying again',
@@ -395,7 +385,9 @@ export async function generateEmojis(formData: FormData): Promise<FormState> {
 }
 
 export async function generateWords(formData: FormData): Promise<ReverseFormState> {
-  const { success } = await getRatelimit().limit(getRateLimitKey('emoji-to-word'));
+  const { success } = await env.RATE_LIMITER.limit({
+    key: getRateLimitKey('emoji-to-word'),
+  });
   if (!success) {
     return {
       error: 'Please wait a few seconds before trying again',
