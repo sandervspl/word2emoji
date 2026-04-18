@@ -11,12 +11,14 @@
     "start": "vite preview",
     "deploy": "pnpm run build && wrangler deploy",
     "cf-typegen": "wrangler types",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate:local": "node scripts/apply-d1-migrations.mjs --local",
+    "db:migrate:remote": "node scripts/apply-d1-migrations.mjs --remote",
     "prettier": "prettier --write '**/*.{js,ts,tsx}'",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.32.3",
-    "@libsql/client": "^0.9.0",
     "@tailwindcss/vite": "^4.2.2",
     "@tanstack/react-router": "^1.168.22",
     "@tanstack/react-start": "^1.167.41",
@@ -39,7 +41,6 @@
     "@types/react": "19.2.1",
     "@types/react-dom": "19.2.1",
     "@vitejs/plugin-react": "^6.0.1",
-    "dotenv": "^16.4.5",
     "drizzle-kit": "^0.24.0",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.11",

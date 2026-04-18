@@ -5,7 +5,7 @@ import OpenAI from 'openai';
 import pRetry from 'p-retry';
 import { getRequest } from '@tanstack/react-start/server';
 
-import { db } from 'src/db';
+import { getDb } from 'src/db';
 import { emojis, emojiWords } from 'src/db/schema';
 import { getCachedValue } from 'src/utils/cache.server';
 import type { Mode } from 'src/utils/constants';
@@ -181,6 +181,8 @@ async function sendEmojiToOpenAI(emojiInput: string): Promise<string[] | undefin
 }
 
 async function savePrompt(prompt: string, result: string[]) {
+  const db = getDb();
+
   await db
     .insert(emojis)
     .values({
@@ -193,6 +195,8 @@ async function savePrompt(prompt: string, result: string[]) {
 }
 
 async function saveEmojiWords(emojiValue: string, words: string[]) {
+  const db = getDb();
+
   await db
     .insert(emojiWords)
     .values({
@@ -205,6 +209,8 @@ async function saveEmojiWords(emojiValue: string, words: string[]) {
 }
 
 async function loadGeneratedCount(mode: Mode) {
+  const db = getDb();
+
   return getCachedValue({
     key: `generated-count:${mode}`,
     revalidateAfterMs: HOUR_MS,
@@ -243,6 +249,8 @@ async function loadGeneratedCount(mode: Mode) {
 }
 
 async function loadWordToEmojiRecentlyGenerated(): Promise<WordToEmojiRecentItem[]> {
+  const db = getDb();
+
   return getCachedValue({
     key: 'recently-generated:word-to-emoji',
     revalidateAfterMs: MINUTE_MS,
@@ -264,6 +272,8 @@ async function loadWordToEmojiRecentlyGenerated(): Promise<WordToEmojiRecentItem
 }
 
 async function loadEmojiToWordRecentlyGenerated(): Promise<EmojiToWordRecentItem[]> {
+  const db = getDb();
+
   return getCachedValue({
     key: 'recently-generated:emoji-to-word',
     revalidateAfterMs: MINUTE_MS,
@@ -320,6 +330,8 @@ export async function loadHomePageData(mode: Mode): Promise<HomePageData> {
 }
 
 export async function generateEmojis(formData: FormData): Promise<FormState> {
+  const db = getDb();
+
   const { success } = await env.RATE_LIMITER.limit({
     key: getRateLimitKey('word-to-emoji'),
   });
@@ -385,6 +397,8 @@ export async function generateEmojis(formData: FormData): Promise<FormState> {
 }
 
 export async function generateWords(formData: FormData): Promise<ReverseFormState> {
+  const db = getDb();
+
   const { success } = await env.RATE_LIMITER.limit({
     key: getRateLimitKey('emoji-to-word'),
   });
