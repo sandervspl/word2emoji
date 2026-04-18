@@ -40,5 +40,5 @@
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "src/**/*.d.ts"],
-  "exclude": ["dist", ".output", ".next", "out", "node_modules"]
+  "exclude": ["dist", ".output", "out", "node_modules"]
 }

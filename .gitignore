@@ -6,7 +6,6 @@ dist/
 .wrangler/
 .pnpm-store/
 out/
-**/.next/
 bundle_analytics/
 sitemap*.xml
 !public/sitemap.xml
@@ -21,10 +20,6 @@ sitemap*.xml
 
 # testing
 /coverage
-
-# next.js
-/.next/
-/out/
 
 # production
 /build
@@ -43,5 +38,4 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
 /.automaker
