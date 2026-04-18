@@ -4,14 +4,8 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "types": [
-      "vite/client"
-    ],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["vite/client"],
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,
@@ -27,62 +21,24 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "noUncheckedIndexedAccess": true,
-    "baseUrl": ".",
     "paths": {
-      "common": [
-        "src/components/common/index"
-      ],
-      "common/*": [
-        "src/components/common/*"
-      ],
-      "hooks": [
-        "src/services/hooks/index"
-      ],
-      "hooks/*": [
-        "src/services/hooks/*"
-      ],
-      "images/*": [
-        "public/images/*"
-      ],
-      "modules": [
-        "src/components/modules/index"
-      ],
-      "modules/*": [
-        "src/components/modules/*"
-      ],
-      "queries/*": [
-        "src/queries/*"
-      ],
-      "services": [
-        "src/services"
-      ],
-      "services/*": [
-        "src/services/*"
-      ],
-      "styles/*": [
-        "src/styles/*"
-      ],
-      "tests/*": [
-        "src/__tests__/*"
-      ],
-      "types": [
-        "src/types/index"
-      ],
-      "vectors/*": [
-        "public/vectors/*"
-      ]
+      "*": ["./*"],
+      "common": ["./src/components/common/index"],
+      "common/*": ["./src/components/common/*"],
+      "hooks": ["./src/services/hooks/index"],
+      "hooks/*": ["./src/services/hooks/*"],
+      "images/*": ["./public/images/*"],
+      "modules": ["./src/components/modules/index"],
+      "modules/*": ["./src/components/modules/*"],
+      "queries/*": ["./src/queries/*"],
+      "services": ["./src/services"],
+      "services/*": ["./src/services/*"],
+      "styles/*": ["./src/styles/*"],
+      "tests/*": ["./src/__tests__/*"],
+      "types": ["./src/types/index"],
+      "vectors/*": ["./public/vectors/*"]
     }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "src/**/*.d.ts"
-  ],
-  "exclude": [
-    "dist",
-    ".output",
-    ".next",
-    "out",
-    "node_modules"
-  ]
+  "include": ["**/*.ts", "**/*.tsx", "src/**/*.d.ts"],
+  "exclude": ["dist", ".output", ".next", "out", "node_modules"]
 }
