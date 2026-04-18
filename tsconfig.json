@@ -1,90 +1,44 @@
 {
   "compilerOptions": {
-    "noUncheckedIndexedAccess": true,
-    "sourceMap": true,
-    "pretty": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["vite/client"],
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
     "noEmit": true,
+    "strict": true,
+    "esModuleInterop": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "strict": true,
-    "noImplicitAny": false,
-    "allowJs": false,
     "isolatedModules": true,
+    "allowJs": false,
     "incremental": true,
-    "moduleResolution": "node",
-    "target": "esnext",
-    "module": "esnext",
-    "jsx": "react-jsx",
-    "lib": [
-      "dom",
-      "esnext"
-    ],
-    "baseUrl": ".",
+    "pretty": true,
+    "sourceMap": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": false,
+    "noUncheckedIndexedAccess": true,
     "paths": {
-      "common": [
-        "src/components/common/index"
-      ],
-      "common/*": [
-        "src/components/common/*"
-      ],
-      "hooks": [
-        "src/services/hooks/index"
-      ],
-      "hooks/*": [
-        "src/services/hooks/*"
-      ],
-      "images/*": [
-        "public/images/*"
-      ],
-      "modules": [
-        "src/components/modules/index"
-      ],
-      "modules/*": [
-        "src/components/modules/*"
-      ],
-      "queries/*": [
-        "src/queries/*"
-      ],
-      "services": [
-        "src/services"
-      ],
-      "services/*": [
-        "src/services/*"
-      ],
-      "styles/*": [
-        "src/styles/*"
-      ],
-      "tests/*": [
-        "src/__tests__/*"
-      ],
-      "types": [
-        "src/types/index"
-      ],
-      "vectors/*": [
-        "public/vectors/*"
-      ]
-    },
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+      "*": ["./*"],
+      "common": ["./src/components/common/index"],
+      "common/*": ["./src/components/common/*"],
+      "hooks": ["./src/services/hooks/index"],
+      "hooks/*": ["./src/services/hooks/*"],
+      "images/*": ["./public/images/*"],
+      "modules": ["./src/components/modules/index"],
+      "modules/*": ["./src/components/modules/*"],
+      "queries/*": ["./src/queries/*"],
+      "services": ["./src/services"],
+      "services/*": ["./src/services/*"],
+      "styles/*": ["./src/styles/*"],
+      "tests/*": ["./src/__tests__/*"],
+      "types": ["./src/types/index"],
+      "vectors/*": ["./public/vectors/*"]
+    }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "src/**/*.d.ts",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
-  ],
-  "exclude": [
-    "dist",
-    ".next",
-    "out",
-    "next.config.ts",
-    "node_modules"
-  ]
+  "include": ["**/*.ts", "**/*.tsx", "src/**/*.d.ts"],
+  "exclude": ["dist", ".output", ".next", "out", "node_modules"]
 }

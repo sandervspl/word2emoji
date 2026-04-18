@@ -2,10 +2,14 @@
 
 # project
 dist/
+.output/
+.wrangler/
+.pnpm-store/
 out/
 **/.next/
 bundle_analytics/
 sitemap*.xml
+!public/sitemap.xml
 **/public/sw.js
 **/public/workbox-*.js
 

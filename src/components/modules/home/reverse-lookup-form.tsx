@@ -1,29 +1,38 @@
-'use client';
-
 import * as React from 'react';
+import { useServerFn } from '@tanstack/react-start';
 import { XCircleIcon } from 'lucide-react';
 
 import { EmojiInput } from './emoji-input';
+import type { ReverseFormState } from './home.types';
 import { WordResults } from './word-results';
 
-export type ReverseFormState = string[] | { error: string } | undefined;
-
 type Props = {
-  action: (prevState: ReverseFormState, formdata: FormData) => Promise<ReverseFormState>;
+  action: (opts: { data: FormData }) => Promise<ReverseFormState>;
 };
 
 export const ReverseLookupForm = (props: Props) => {
-  const [randomId, setRandomId] = React.useState('');
-  const [response, formAction] = React.useActionState(props.action, undefined);
-
-  React.useEffect(() => {
-    setRandomId(crypto.randomUUID());
-  }, []);
+  const submitLookup = useServerFn(props.action);
+  const [response, setResponse] = React.useState<ReverseFormState>(undefined);
+  const [pending, startTransition] = React.useTransition();
 
   return (
-    <form className="mt-8 flex w-full flex-col justify-center" action={formAction}>
-      <EmojiInput />
-      <input type="hidden" name="randomId" value={randomId} />
+    <form
+      className="mt-8 flex w-full flex-col justify-center"
+      onSubmit={(event) => {
+        event.preventDefault();
+
+        const formData = new FormData(event.currentTarget);
+
+        startTransition(async () => {
+          setResponse(
+            await submitLookup({
+              data: formData,
+            }),
+          );
+        });
+      }}
+    >
+      <EmojiInput pending={pending} />
 
       {response && 'error' in response && (
         <div className="mx-auto mt-2 flex items-center gap-2 text-sm text-red-500">
@@ -31,7 +40,7 @@ export const ReverseLookupForm = (props: Props) => {
           {response.error}
         </div>
       )}
-      {Array.isArray(response) && <WordResults words={response} />}
+      {Array.isArray(response) && <WordResults words={response} pending={pending} />}
     </form>
   );
 };

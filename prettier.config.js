@@ -1,7 +1,7 @@
 // @ts-check
 
 /** @type {import("@ianvs/prettier-plugin-sort-imports").PrettierConfig} */
-module.exports = {
+const config = {
   trailingComma: 'all',
   arrowParens: 'always',
   singleQuote: true,
@@ -9,7 +9,7 @@ module.exports = {
   importOrder: [
     '^types$',
     '^(react|react-dom)$',
-    '^next(.*)$',
+    '^@tanstack(.*)$',
     '<THIRD_PARTY_MODULES>',
     '',
     '^(src|vectors|images|services|hooks|queries|store|styles|config|navigators|screens|static)(/.*|$)',
@@ -21,3 +21,5 @@ module.exports = {
   importOrderTypeScriptVersion: '5.3.3',
   plugins: ['@ianvs/prettier-plugin-sort-imports', 'prettier-plugin-tailwindcss'],
 };
+
+export default config;

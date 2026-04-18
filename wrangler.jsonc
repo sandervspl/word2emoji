@@ -1,0 +1,44 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "word2emoji",
+  "compatibility_date": "2026-04-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "@tanstack/react-start/server-entry",
+  "observability": {
+    "enabled": true,
+  },
+  "secrets": {
+    "required": ["OPENAI_API_KEY"],
+  },
+  "routes": [
+    {
+      "pattern": "word2emoji.com",
+      "custom_domain": true,
+    },
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "45bacdbdc5e74d53af2f269a65d39dce",
+    },
+  ],
+  "ratelimits": [
+    {
+      "name": "RATE_LIMITER",
+      // Must be unique within your Cloudflare account.
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 10,
+        "period": 10,
+      },
+    },
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "word2emoji",
+      "database_id": "493cc2fd-4a24-4c78-af84-9f0375563ac6",
+      "migrations_dir": "drizzle",
+    },
+  ],
+}
