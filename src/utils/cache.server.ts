@@ -1,4 +1,4 @@
-import { getRequest } from '@tanstack/react-start/server';
+import { env, waitUntil } from 'cloudflare:workers';
 
 type CacheEntry<T> = {
   updatedAt: number;
@@ -12,86 +12,49 @@ type CacheOptions<T> = {
   load: () => Promise<T>;
 };
 
-const memoryCache = new Map<string, CacheEntry<unknown>>();
+const CACHE_KEY_PREFIX = 'cache:';
 const refreshTasks = new Map<string, Promise<unknown>>();
-type EdgeCacheStorage = CacheStorage & { default?: Cache };
 
-function getEdgeCache() {
-  if (typeof caches === 'undefined') {
-    return undefined;
-  }
-
-  return (caches as EdgeCacheStorage).default;
+function getCacheKey(key: string) {
+  return `${CACHE_KEY_PREFIX}${key}`;
 }
 
-function getCacheRequest(key: string) {
-  const url = new URL(getRequest().url);
-  url.pathname = `/_cache/${encodeURIComponent(key)}`;
-  url.search = '';
-
-  return new Request(url.toString(), { method: 'GET' });
-}
-
-async function readFromEdgeCache<T>(key: string): Promise<CacheEntry<T> | undefined> {
-  const edgeCache = getEdgeCache();
-  if (!edgeCache) {
-    return undefined;
-  }
-
-  const response = await edgeCache.match(getCacheRequest(key));
-  if (!response) {
-    return undefined;
-  }
-
-  try {
-    return (await response.json()) as CacheEntry<T>;
-  } catch {
-    return undefined;
-  }
-}
-
-async function writeToEdgeCache<T>(key: string, entry: CacheEntry<T>, expireAfterMs: number) {
-  const edgeCache = getEdgeCache();
-  if (!edgeCache) {
-    return;
-  }
-
-  await edgeCache.put(
-    getCacheRequest(key),
-    new Response(JSON.stringify(entry), {
-      headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': `public, max-age=${Math.ceil(expireAfterMs / 1000)}`,
-      },
-    }),
+function isCacheEntry<T>(value: unknown): value is CacheEntry<T> {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'updatedAt' in value &&
+    typeof value.updatedAt === 'number' &&
+    'value' in value
   );
 }
 
-function readFromMemory<T>(key: string, expireAfterMs: number): CacheEntry<T> | undefined {
-  const entry = memoryCache.get(key) as CacheEntry<T> | undefined;
-  if (!entry) {
+async function readFromKv<T>(key: string): Promise<CacheEntry<T> | undefined> {
+  try {
+    const entry = await env.KV.get<CacheEntry<T>>(getCacheKey(key), 'json');
+    if (!isCacheEntry<T>(entry)) {
+      return undefined;
+    }
+
+    return entry;
+  } catch (error) {
+    console.error(`Failed to read cache entry "${key}" from KV`, error);
     return undefined;
   }
-
-  if (Date.now() - entry.updatedAt >= expireAfterMs) {
-    memoryCache.delete(key);
-    return undefined;
-  }
-
-  return entry;
 }
 
-function writeToMemory<T>(key: string, entry: CacheEntry<T>) {
-  memoryCache.set(key, entry);
+async function writeToKv<T>(key: string, entry: CacheEntry<T>, expireAfterMs: number) {
+  try {
+    await env.KV.put(getCacheKey(key), JSON.stringify(entry), {
+      expirationTtl: Math.max(60, Math.ceil(expireAfterMs / 1000)),
+    });
+  } catch (error) {
+    console.error(`Failed to write cache entry "${key}" to KV`, error);
+  }
 }
 
-async function readCache<T>(key: string, expireAfterMs: number) {
-  const edgeEntry = await readFromEdgeCache<T>(key);
-  if (edgeEntry) {
-    return edgeEntry;
-  }
-
-  return readFromMemory<T>(key, expireAfterMs);
+async function readCache<T>(key: string) {
+  return readFromKv<T>(key);
 }
 
 async function refreshCache<T>(options: CacheOptions<T>) {
@@ -107,8 +70,7 @@ async function refreshCache<T>(options: CacheOptions<T>) {
       value,
     };
 
-    writeToMemory(options.key, entry);
-    await writeToEdgeCache(options.key, entry, options.expireAfterMs);
+    await writeToKv(options.key, entry, options.expireAfterMs);
 
     return entry;
   })().finally(() => {
@@ -125,7 +87,7 @@ export async function getCachedValue<T>(options: CacheOptions<T>) {
     return options.load();
   }
 
-  const cached = await readCache<T>(options.key, options.expireAfterMs);
+  const cached = await readCache<T>(options.key);
   if (!cached) {
     return (await refreshCache(options)).value;
   }
@@ -136,7 +98,11 @@ export async function getCachedValue<T>(options: CacheOptions<T>) {
   }
 
   if (age < options.expireAfterMs) {
-    void refreshCache(options);
+    waitUntil(
+      refreshCache(options).catch((error) => {
+        console.error(`Failed to refresh cache entry "${options.key}"`, error);
+      }),
+    );
     return cached.value;
   }
 

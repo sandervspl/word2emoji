@@ -7,10 +7,16 @@
   "observability": {
     "enabled": true,
   },
-  // "routes": [
-  //   {
-  //     "pattern": "word2emoji.com",
-  //     "custom_domain": true
-  //   }
-  // ]
+  "routes": [
+    {
+      "pattern": "word2emoji.com",
+      "custom_domain": true,
+    },
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "45bacdbdc5e74d53af2f269a65d39dce",
+    },
+  ],
 }
