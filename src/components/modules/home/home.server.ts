@@ -1,7 +1,6 @@
 import { env } from 'cloudflare:workers';
 import { count, desc, eq } from 'drizzle-orm';
 import * as emoji from 'node-emoji';
-import OpenAI from 'openai';
 import pRetry from 'p-retry';
 import { getRequest } from '@tanstack/react-start/server';
 
@@ -24,7 +23,7 @@ const MINUTE_MS = 60_000;
 const HOUR_MS = 60 * MINUTE_MS;
 const DAY_MS = 24 * HOUR_MS;
 
-let openai: OpenAI | undefined;
+const WORKERS_AI_TEXT_MODEL = '@cf/meta/llama-3.1-8b-instruct-awq';
 
 const EMOJI_SYSTEM_PROMPT = `You are an emoji generator. Given a word or short phrase, respond with at most 4 relevant emojis that represent or relate to the input.
 
@@ -68,14 +67,6 @@ Output: ["morning", "sunrise coffee", "peaceful", "dawn", "early bird", "relaxin
 Input: 🏳️‍🌈
 Output: ["pride", "LGBTQ", "rainbow flag", "equality", "diversity", "inclusion", "celebration"]`;
 
-function getOpenAI() {
-  openai ??= new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
-
-  return openai;
-}
-
 function getRateLimitKey(scope: 'word-to-emoji' | 'emoji-to-word') {
   try {
     const request = getRequest();
@@ -96,57 +87,48 @@ function normalizePrompt(prompt: string) {
   return prompt.trim().replace(/\s+/g, ' ');
 }
 
-async function sendToOpenAI(prompt: string): Promise<string | undefined> {
+async function runWorkersAITextGeneration(options: {
+  systemPrompt: string;
+  userPrompt: string;
+  maxTokens: number;
+}): Promise<string | undefined> {
   try {
-    const completion = await getOpenAI().chat.completions.create({
-      model: 'gpt-4o-mini',
+    const result = await env.AI.run(WORKERS_AI_TEXT_MODEL, {
       messages: [
-        { role: 'system', content: EMOJI_SYSTEM_PROMPT },
-        { role: 'user', content: prompt },
+        { role: 'system', content: options.systemPrompt },
+        { role: 'user', content: options.userPrompt },
       ],
-      max_tokens: 50,
+      max_tokens: options.maxTokens,
       temperature: 0.7,
     });
 
-    const result = completion.choices[0]?.message?.content?.trim();
+    const response = result.response?.trim();
 
-    if (!result) {
-      console.error('OpenAI returned empty response');
+    if (!response) {
+      console.error('Workers AI returned empty response');
       return undefined;
     }
 
-    return result;
+    return response;
   } catch (error: unknown) {
-    if (error instanceof OpenAI.APIError) {
-      const { status, message } = error;
-      console.error('OpenAI API error:', status, message);
-    } else {
-      console.error('Unexpected error during emoji generation:', error);
-    }
+    console.error('Unexpected Workers AI generation error:', error);
 
     return undefined;
   }
 }
 
-async function sendEmojiToOpenAI(emojiInput: string): Promise<string[] | undefined> {
+async function sendEmojiToWorkersAI(emojiInput: string): Promise<string[] | undefined> {
+  const result = await runWorkersAITextGeneration({
+    systemPrompt: EMOJI_TO_WORDS_SYSTEM_PROMPT,
+    userPrompt: emojiInput,
+    maxTokens: 150,
+  });
+
+  if (!result) {
+    return undefined;
+  }
+
   try {
-    const completion = await getOpenAI().chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: EMOJI_TO_WORDS_SYSTEM_PROMPT },
-        { role: 'user', content: emojiInput },
-      ],
-      max_tokens: 150,
-      temperature: 0.7,
-    });
-
-    const result = completion.choices[0]?.message?.content?.trim();
-
-    if (!result) {
-      console.error('OpenAI returned empty response for emoji-to-words');
-      return undefined;
-    }
-
     try {
       const parsed = JSON.parse(result);
       if (Array.isArray(parsed) && parsed.every((item) => typeof item === 'string')) {
@@ -169,12 +151,7 @@ async function sendEmojiToOpenAI(emojiInput: string): Promise<string[] | undefin
     console.error('Failed to parse emoji-to-words response as JSON:', result);
     return undefined;
   } catch (error: unknown) {
-    if (error instanceof OpenAI.APIError) {
-      const { status, message } = error;
-      console.error('OpenAI API error (emoji-to-words):', status, message);
-    } else {
-      console.error('Unexpected error during emoji-to-words generation:', error);
-    }
+    console.error('Unexpected error during emoji-to-words generation:', error);
 
     return undefined;
   }
@@ -361,7 +338,11 @@ export async function generateEmojis(formData: FormData): Promise<FormState> {
   try {
     emojisResult = await pRetry(
       async () => {
-        const result = await sendToOpenAI(prompt);
+        const result = await runWorkersAITextGeneration({
+          systemPrompt: EMOJI_SYSTEM_PROMPT,
+          userPrompt: prompt,
+          maxTokens: 50,
+        });
 
         if (!result || emoji.strip(result) === result) {
           throw new Error('No emojis found');
@@ -435,7 +416,7 @@ export async function generateWords(formData: FormData): Promise<ReverseFormStat
   try {
     wordsResult = await pRetry(
       async () => {
-        const result = await sendEmojiToOpenAI(cacheKey);
+        const result = await sendEmojiToWorkersAI(cacheKey);
         if (!result || result.length === 0) {
           throw new Error('No words found');
         }

@@ -26,7 +26,6 @@
     "drizzle-orm": "^0.33.0",
     "lucide-react": "^0.428.0",
     "node-emoji": "^2.1.3",
-    "openai": "^4.56.0",
     "p-retry": "^6.2.0",
     "react": "19.2.3",
     "react-aria-components": "^1.8.0",
