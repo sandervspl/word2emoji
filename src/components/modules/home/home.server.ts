@@ -23,7 +23,7 @@ const MINUTE_MS = 60_000;
 const HOUR_MS = 60 * MINUTE_MS;
 const DAY_MS = 24 * HOUR_MS;
 
-const WORKERS_AI_TEXT_MODEL = '@cf/meta/llama-3.1-8b-instruct-awq';
+const WORKERS_AI_TEXT_MODEL = '@cf/meta/llama-3.2-3b-instruct';
 
 const EMOJI_SYSTEM_PROMPT = `You are an emoji generator. Given a word or short phrase, respond with at most 4 relevant emojis that represent or relate to the input.
 
