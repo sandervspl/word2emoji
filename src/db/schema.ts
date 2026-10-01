@@ -1,4 +1,4 @@
-import { index, integer, sqliteTable, text, unique } from 'drizzle-orm/sqlite-core';
+import { index, integer, primaryKey, sqliteTable, text, unique } from 'drizzle-orm/sqlite-core';
 
 export const emojis = sqliteTable(
   'emojis',
@@ -26,5 +26,20 @@ export const emojiWords = sqliteTable(
   (table) => ({
     emoji_unq: unique('emoji_unq').on(table.emoji),
     emoji_idx: index('emoji_idx').on(table.emoji),
+  }),
+);
+
+export const errorOccurrences = sqliteTable(
+  'error_occurrences',
+  {
+    error_key: text('error_key').notNull(),
+    day: text('day').notNull(),
+    occurrence_count: integer('occurrence_count').notNull().default(1),
+    last_message: text('last_message').notNull(),
+    updated_at: text('updated_at').notNull(),
+    notification_attempted_at: text('notification_attempted_at'),
+  },
+  (table) => ({
+    error_occurrences_pk: primaryKey({ columns: [table.error_key, table.day] }),
   }),
 );

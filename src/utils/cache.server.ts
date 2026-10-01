@@ -1,5 +1,7 @@
 import { env, waitUntil } from 'cloudflare:workers';
 
+import { reportOperationalError } from './error-monitor.server';
+
 type CacheEntry<T> = {
   updatedAt: number;
   value: T;
@@ -38,7 +40,7 @@ async function readFromKv<T>(key: string): Promise<CacheEntry<T> | undefined> {
 
     return entry;
   } catch (error) {
-    console.error(`Failed to read cache entry "${key}" from KV`, error);
+    reportOperationalError('kv-cache-read', `Failed to read cache entry "${key}" from KV`, error);
     return undefined;
   }
 }
@@ -49,7 +51,7 @@ async function writeToKv<T>(key: string, entry: CacheEntry<T>, expireAfterMs: nu
       expirationTtl: Math.max(60, Math.ceil(expireAfterMs / 1000)),
     });
   } catch (error) {
-    console.error(`Failed to write cache entry "${key}" to KV`, error);
+    reportOperationalError('kv-cache-write', `Failed to write cache entry "${key}" to KV`, error);
   }
 }
 
@@ -100,7 +102,11 @@ export async function getCachedValue<T>(options: CacheOptions<T>) {
   if (age < options.expireAfterMs) {
     waitUntil(
       refreshCache(options).catch((error) => {
-        console.error(`Failed to refresh cache entry "${options.key}"`, error);
+        reportOperationalError(
+          'kv-cache-refresh',
+          `Failed to refresh cache entry "${options.key}"`,
+          error,
+        );
       }),
     );
     return cached.value;

@@ -9,7 +9,8 @@ import { emojis, emojiWords } from 'src/db/schema';
 import { getCachedValue } from 'src/utils/cache.server';
 import type { Mode } from 'src/utils/constants';
 import { extractEmojis, validateEmojiInput } from 'src/utils/emoji';
-import { validatePrompt } from 'src/utils/validation';
+import { reportOperationalError } from 'src/utils/error-monitor.server';
+import { validatePrompt } from 'src/utils/prompt-validation.server';
 
 import type {
   EmojiToWordRecentItem,
@@ -105,13 +106,17 @@ async function runWorkersAITextGeneration(options: {
     const response = result.response?.trim();
 
     if (!response) {
-      console.error('Workers AI returned empty response');
+      reportOperationalError('workers-ai-empty-response', 'Workers AI returned empty response');
       return undefined;
     }
 
     return response;
   } catch (error: unknown) {
-    console.error('Unexpected Workers AI generation error:', error);
+    reportOperationalError(
+      'workers-ai-generation',
+      'Unexpected Workers AI generation error:',
+      error,
+    );
 
     return undefined;
   }
@@ -143,15 +148,26 @@ async function sendEmojiToWorkersAI(emojiInput: string): Promise<string[] | unde
             return extracted;
           }
         } catch {
-          console.error('Failed to parse extracted JSON from emoji-to-words response');
+          reportOperationalError(
+            'workers-ai-json-extraction',
+            'Failed to parse extracted JSON from emoji-to-words response',
+          );
         }
       }
     }
 
-    console.error('Failed to parse emoji-to-words response as JSON:', result);
+    reportOperationalError(
+      'workers-ai-response-parse',
+      'Failed to parse emoji-to-words response as JSON:',
+      result,
+    );
     return undefined;
   } catch (error: unknown) {
-    console.error('Unexpected error during emoji-to-words generation:', error);
+    reportOperationalError(
+      'workers-ai-emoji-to-word',
+      'Unexpected error during emoji-to-words generation:',
+      error,
+    );
 
     return undefined;
   }
@@ -366,7 +382,13 @@ export async function generateEmojis(formData: FormData): Promise<FormState> {
       },
       { retries: 3 },
     );
-  } catch {
+  } catch (error) {
+    reportOperationalError(
+      'word-to-emoji-generation-failed',
+      'Word-to-emoji generation failed after retries:',
+      error,
+    );
+
     return {
       error: 'Something went wrong, please try again',
     };
@@ -425,7 +447,13 @@ export async function generateWords(formData: FormData): Promise<ReverseFormStat
       },
       { retries: 3 },
     );
-  } catch {
+  } catch (error) {
+    reportOperationalError(
+      'emoji-to-word-generation-failed',
+      'Emoji-to-word generation failed after retries:',
+      error,
+    );
+
     return {
       error: 'Something went wrong, please try again',
     };
