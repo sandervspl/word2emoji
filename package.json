@@ -20,9 +20,9 @@
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.32.3",
     "@tailwindcss/vite": "^4.2.2",
-    "@tanstack/react-router": "^1.168.22",
-    "@tanstack/react-start": "^1.167.41",
-    "@tanstack/router-plugin": "^1.167.22",
+    "@tanstack/react-router": "1.170.44",
+    "@tanstack/react-start": "1.169.1",
+    "@tanstack/router-plugin": "1.168.45",
     "drizzle-orm": "^0.33.0",
     "lucide-react": "^0.428.0",
     "node-emoji": "^2.1.3",

@@ -5,13 +5,13 @@ import type { Mode } from 'src/utils/constants';
 import { generateEmojis, generateWords, loadHomePageData } from './home.server';
 
 export const getHomePageData = createServerFn({ method: 'GET' })
-  .inputValidator((data: { mode: Mode }) => data)
+  .validator((data: { mode: Mode }) => data)
   .handler(async ({ data }) => {
     return loadHomePageData(data.mode);
   });
 
 export const getEmojis = createServerFn({ method: 'POST' })
-  .inputValidator((data) => {
+  .validator((data) => {
     if (!(data instanceof FormData)) {
       throw new Error('Expected FormData');
     }
@@ -23,7 +23,7 @@ export const getEmojis = createServerFn({ method: 'POST' })
   });
 
 export const getWords = createServerFn({ method: 'POST' })
-  .inputValidator((data) => {
+  .validator((data) => {
     if (!(data instanceof FormData)) {
       throw new Error('Expected FormData');
     }
